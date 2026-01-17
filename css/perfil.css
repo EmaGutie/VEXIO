@@ -1,0 +1,247 @@
+/* --- ESTILOS WEB (BENTO) --- */
+:root { --user-color: #2563eb; --contact-color: #d97706; --brand-color: #00d2ff; }
+body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; }
+
+/* REFUERZO: El contenedor debe ser relativo para que la marca de agua sepa dónde centrarse */
+#area-cv { 
+    position: relative !important; 
+    overflow: hidden; 
+}
+
+.bento-container { padding: 40px 0; }
+.bento-card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); height: 100%; border: 1px solid rgba(0,0,0,0.05); }
+.profile-img { width: 120px; height: 120px; object-fit: cover; border-radius: 30px; border: 4px solid white; box-shadow: 0 10px 15px rgba(0,0,0,0.1); background-color: #eee; }
+.status-pill { background: #dcfce7; color: #166534; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.badge-skill { background: var(--contact-color); color: white; padding: 6px 14px; border-radius: 10px; font-size: 0.85rem; display: inline-block; margin: 3px; font-weight: 500; }
+.section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 15px; font-weight: 800; }
+pre { white-space: pre-wrap; font-family: 'Inter', sans-serif; color: #475569; font-size: 0.95rem; }
+
+/* --- MODO PDF ATS FINAL --- */
+.modo-pdf-ats {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.modo-pdf-ats .row, 
+.modo-pdf-ats .container, 
+.modo-pdf-ats .bento-container {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.modo-pdf-ats [class*="col-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+}
+
+.modo-pdf-ats .bento-card {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 15px !important;
+    height: auto !important;
+}
+
+.modo-pdf-ats #user-nombre {
+    font-size: 26pt !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    color: black !important;
+    text-align: left !important;
+    margin-bottom: 5px !important;
+}
+
+.modo-pdf-ats #user-profesion {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    text-align: left !important;
+}
+
+.modo-pdf-ats #user-ubicacion {
+    font-size: 10pt !important;
+    color: #666 !important;
+    margin-bottom: 10px !important;
+}
+
+.modo-pdf-ats .section-title {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    color: black !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid #000 !important;
+    padding-bottom: 2px !important;
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
+}
+
+.modo-pdf-ats pre, 
+.modo-pdf-ats #user-sobre-mi {
+    font-size: 10.5pt !important;
+    color: black !important;
+    line-height: 1.4 !important;
+    text-align: justify !important;
+}
+
+.modo-pdf-ats .badge-skill {
+    background: transparent !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 10.5pt !important;
+    font-weight: normal !important;
+}
+.modo-pdf-ats .badge-skill::after { content: " • "; }
+.modo-pdf-ats .badge-skill:last-child::after { content: ""; }
+
+.modo-pdf-ats .profile-img, .modo-pdf-ats .no-print, 
+.modo-pdf-ats .btn, .modo-pdf-ats .status-pill, 
+.modo-pdf-ats #user-status, .modo-pdf-ats i { 
+    display: none !important; 
+}
+
+/* Botón Volver al Inicio */
+.btn-volver-glass {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    text-decoration: none;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.btn-volver-glass:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    color: #3b82f6;
+}
+
+@media print {
+    .no-print { display: none !important; }
+}
+
+/* --- REPARACIÓN DE MARCA DE AGUA (NEXUZ EDITION) --- */
+.watermark-pdf {
+    display: none; /* Oculta en la web */
+    position: absolute;
+    
+    /* Ubicación en la esquina superior derecha */
+    top: 20px;
+    right: 30px;
+    
+    /* Estética pequeña y moderna */
+    font-size: 1.2rem !important; 
+    font-weight: 900 !important;
+    letter-spacing: 2px;
+    color: var(--brand-color) !important; 
+    opacity: 0.5;
+    
+    transform: none !important;
+    z-index: 9999;
+    pointer-events: none;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    
+    /* Sello distintivo NEXUZ */
+    border: 2px solid var(--brand-color);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* Solo se activa al descargar el PDF */
+.modo-pdf-ats .watermark-pdf {
+    display: block !important;
+}
+
+/* Si usas un pseudo-elemento para el texto, asegúrate de que diga NEXUZ */
+.watermark-pdf::before {
+    content: "NEXUZ";
+}
+
+/* --- ESTILOS FOOTER LEGAL --- */
+.footer-legal {
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 30px 0;
+    margin-top: 50px;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.legal-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.legal-link:hover {
+    color: #00d2ff;
+    text-decoration: underline;
+}
+.text-muted1 {
+    color: #94a3b8;
+}
+
+/* Asegurar que no aparezca en el PDF */
+@media print {
+    .footer-legal { display: none !important; }
+}
+
+/* --- MODAL LEGAL CENTRADO (POP-UP) --- */
+.modal-legal {
+    display: none; /* Se activa con JS */
+    position: fixed; /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro traslúcido */
+    backdrop-filter: blur(5px); /* Efecto de desenfoque premium */
+    z-index: 99999; /* Por encima de los inputs y botones */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-legal {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: aparecer 0.3s ease; /* Animación de entrada */
+}
+
+@keyframes aparecer {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #64748b;
+}
