@@ -1,4 +1,4 @@
-// Configuración de Supabase (usando la variable global cargada desde el HTML)
+// Configuración de Supabase
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -22,7 +22,7 @@ async function cargarPerfil() {
         document.getElementById('user-educacion').textContent = usuario.educacion;
         document.getElementById('user-ubicacion').textContent = usuario.ubicacion || "Argentina";
         
-        // --- MANEJO DE DISPONIBILIDAD DINÁMICA ---
+        // --- MANEJO DE DISPONIBILIDAD ---
         const statusPill = document.getElementById('user-status');
         if (statusPill) {
             const disp = usuario.disponibilidad ? usuario.disponibilidad.toLowerCase() : 'full-time';
@@ -43,13 +43,19 @@ async function cargarPerfil() {
             }
         }
 
-        // --- SOLUCIÓN PARA LA FOTO/INICIALES (EL FIX QUE BUSCAMOS) ---
+        // --- SOLUCIÓN REFORZADA PARA FOTO (PABLO FIX) ---
         const img = document.getElementById('user-foto');
         if (img) {
             const nombreCodificado = encodeURIComponent(usuario.nombre || "Usuario");
             const avatarUrl = `https://ui-avatars.com/api/?name=${nombreCodificado}&background=00d2ff&color=fff&size=200&bold=true`;
 
-            if (usuario.foto && usuario.foto.trim() !== "" && usuario.foto !== "null") {
+            // Verificamos si la URL existe, no es "null" y parece un link real (tiene un punto)
+            const esUrlValida = usuario.foto && 
+                               usuario.foto.trim() !== "" && 
+                               usuario.foto !== "null" && 
+                               usuario.foto.includes('.');
+
+            if (esUrlValida) {
                 img.src = usuario.foto;
                 img.onerror = () => { img.src = avatarUrl; };
             } else {
@@ -87,14 +93,12 @@ async function cargarPerfil() {
         }
         
         if (usuario.email) {
-            const btnMail = document.getElementById('link-email');
-            btnMail.href = `mailto:${usuario.email}`;
+            document.getElementById('link-email').href = `mailto:${usuario.email}`;
         }
 
     } catch (err) { console.error("Error cargando Perfil VEXIO:", err); }
 }
 
-// Función global para que el botón del HTML la vea
 window.descargarPDF = function() {
     const elemento = document.getElementById("area-cv");
     const nombre = document.getElementById('user-nombre').textContent || 'Perfil';
