@@ -21,7 +21,10 @@
         <div class="watermark-pdf"></div> <div class="row g-4">
         <div class="col-lg-4">
             <div class="bento-card text-center h-100">
-                <img id="user-foto" src="" class="profile-img mb-3" alt="Foto">
+                <img id="user-foto" src="" 
+                     onerror="this.src='https://ui-avatars.com/api/?name=User&background=random&size=150';this.onerror=null;" 
+                     class="profile-img mb-3" alt="Foto">
+                
                 <h2 id="user-nombre" class="fw-bold mb-1">Cargando...</h2>
                 <p id="user-profesion" class="text-muted mb-3"></p>
                 <div class="mb-4"><span id="user-status" class="badge rounded-pill px-3 py-2"></span></div>
