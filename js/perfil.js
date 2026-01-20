@@ -21,11 +21,11 @@ async function cargarPerfil() {
         document.getElementById('user-educacion').textContent = usuario.educacion;
         document.getElementById('user-ubicacion').textContent = usuario.ubicacion || "Argentina";
         
-        // --- MANEJO DE DISPONIBILIDAD DINÁMICA (CORREGIDO) ---
+        // --- MANEJO DE DISPONIBILIDAD DINÁMICA ---
         const statusPill = document.getElementById('user-status');
         if (statusPill) {
             const disp = usuario.disponibilidad ? usuario.disponibilidad.toLowerCase() : 'full-time';
-            statusPill.className = "badge rounded-pill px-3 py-2"; // Reset clases
+            statusPill.className = "badge rounded-pill px-3 py-2"; 
             
             if (disp === 'full-time') {
                 statusPill.textContent = 'Disponible Full Time';
@@ -37,21 +37,26 @@ async function cargarPerfil() {
                 statusPill.textContent = 'Proyectos Freelance';
                 statusPill.classList.add('bg-dispo-free');
             } else {
-                // Fallback por si no hay dato o es distinto
                 statusPill.textContent = 'Disponible';
                 statusPill.classList.add('bg-dispo-full');
             }
         }
 
-        // --- SOLUCIÓN PARA LA FOTO/INICIALES ---
+        // --- SOLUCIÓN PARA LA FOTO/INICIALES (REFORZADO) ---
         const img = document.getElementById('user-foto');
         if (img) {
-            if (usuario.foto && usuario.foto.trim() !== "") {
+            const nombreCodificado = encodeURIComponent(usuario.nombre || "Usuario");
+            const avatarUrl = `https://ui-avatars.com/api/?name=${nombreCodificado}&background=00d2ff&color=fff&size=200&bold=true`;
+
+            // Si hay una foto en la base de datos, intentamos cargarla
+            if (usuario.foto && usuario.foto.trim() !== "" && usuario.foto !== "null") {
                 img.src = usuario.foto;
                 img.crossOrigin = "anonymous"; 
+                // Si la imagen de la DB falla (link roto), ponemos el avatar
+                img.onerror = () => { img.src = avatarUrl; };
             } else {
-                const nombreCodificado = encodeURIComponent(usuario.nombre);
-                img.src = `https://ui-avatars.com/api/?name=${nombreCodificado}&background=00d2ff&color=fff&size=200&bold=true`;
+                // Si no hay foto directamente ponemos el avatar
+                img.src = avatarUrl;
             }
         }
 
@@ -77,20 +82,17 @@ async function cargarPerfil() {
             });
         }
 
-        // --- CONTACTO PERSONALIZADO VEXIO ---
-        
-        // WhatsApp con mensaje predeterminado y COLOR VERDE (vía CSS)
+        // WhatsApp
         if (usuario.telefono) {
             const numLimpio = usuario.telefono.replace(/\+/g, '').replace(/\s/g, '');
             const msjWA = encodeURIComponent(`Hola ${usuario.nombre}, vi tu perfil profesional en VEXIO y me gustaría contactarte.`);
             document.getElementById('link-whatsapp').href = `https://wa.me/${numLimpio}?text=${msjWA}`;
         }
         
-        // Email personalizado (Gmail Web) con marca VEXIO
+        // Email
         if (usuario.email) {
             const asunto = encodeURIComponent(`Contacto desde VEXIO | Oportunidad para ${usuario.nombre}`);
             const cuerpo = encodeURIComponent(`Hola ${usuario.nombre},\n\nHe visto tu perfil en la plataforma VEXIO y me interesa tu experiencia como ${usuario.profesion}.\n\n¿Podríamos coordinar una breve charla?\n\nSaludos.`);
-            
             const btnMail = document.getElementById('link-email');
             btnMail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${usuario.email}&su=${asunto}&body=${cuerpo}`;
         }
@@ -98,25 +100,17 @@ async function cargarPerfil() {
     } catch (err) { console.error("Error cargando Perfil VEXIO:", err); }
 }
 
-// --- FUNCIÓN DESCARGAR PDF ---
 function descargarPDF() {
     const elemento = document.getElementById("area-cv");
     const nombre = document.getElementById('user-nombre').textContent || 'Perfil';
-
-    // 1. Encendemos la marca de agua y modo PDF
     elemento.classList.add('modo-pdf-ats');
 
-    // 2. Esperamos un momento para el renderizado
     setTimeout(() => {
         const opt = {
             margin: [10, 10, 10, 10],
             filename: `CV_${nombre.replace(/\s+/g, '_')}_VEXIO.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                allowTaint: true 
-            },
+            html2canvas: { scale: 2, useCORS: true, allowTaint: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
