@@ -1,0 +1,104 @@
+[
+{
+    "slug": "tu-nombre",
+    "status": "Disponible para proyectos",
+    "nombre": "Tu Nombre Completo",
+    "profesion": "Desarrollador Fullstack | Estudiante de Software",
+    "color": "#00d2ff",
+    "foto": "https://randomuser.me/api/portraits/men/1.jpg",
+    "sobre_mi": "Estudiante de último año apasionado por cambiar la forma en que el talento conecta con las empresas. Especialista en crear soluciones web rápidas y escalables.",
+    "telefono": "5491112345678",
+    "skills": ["HTML5", "CSS3", "JavaScript", "Bootstrap 5", "Astro", "Git"]
+},
+{
+    "slug": "ana-diseno",
+    "status": "Disponible para proyectos",
+    "nombre": "Ana García",
+    "profesion": "Diseñadora Gráfica y Social Media",
+    "color": "#ff4757",
+    "foto": "https://randomuser.me/api/portraits/women/2.jpg",
+    "sobre_mi": "Creativa visual con más de 5 años de experiencia ayudando a marcas a destacar en el mundo digital a través de diseños minimalistas y efectivos.",
+    "telefono": "5491198765432",
+    "skills": ["Photoshop", "Illustrator", "Figma", "Branding", "Canva Pro"]
+},
+
+{
+    "slug": "carlos-admin",
+    "status": "Disponible para proyectos",
+    "nombre": "Carlos Sosa",
+    "profesion": "Administrativo Contable Senior",
+    "color": "#1e293b", 
+    "foto": "https://randomuser.me/api/portraits/women/2.jpg",
+    "sobre_mi": "Especialista en gestión de proveedores y conciliaciones bancarias con más de 10 años de experiencia en empresas del sector salud.",
+    "telefono": "549110000000",
+    "skills": ["Excel Avanzado", "SAP", "Gestión de Tesorería", "Liquidación de Sueldos"]
+},
+
+{
+    "slug": "carla-propiedades",
+    "status": "Disponible para proyectos",
+    "nombre": "Carla Rodriguez",
+    "profesion": "Asesora en Inversiones Inmobiliarias",
+    "color": "#0a635b",
+    "foto": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&h=200&fit=crop",
+    "sobre_mi": "Con más de 8 años en el mercado de Real Estate, ayudo a familias e inversores a encontrar su lugar ideal. Mi enfoque se basa en la transparencia y la negociación estratégica.",
+    "telefono": "549110000000",
+    "skills": [
+        "Negociación",
+        "Cierre de Ventas",
+        "Análisis de Mercado",
+        "Tasaciones",
+        "Marketing Inmobiliario"
+    ]
+},
+
+{
+    "slug": "emanuel-desarrollador",
+    "status": "Disponible para proyectos",
+    "nombre": "Emanuel Gutierrez",
+    "profesion": "Tecnico superior en desarrollo de software",
+    "color": "#2563eb",
+    "foto": "img/foto_comprimida.jpg",
+    "sobre_mi": "Desarrollador fullstack",
+    "telefono": "2617149863",
+    "skills": [
+        "python",
+        "flask",
+        "js",
+        "html",
+        "css",
+        "bootstrap"
+    ]
+},
+{
+    "slug": "Adela-costurera",
+    "nombre": "Adela Gutierrez",
+    "profesion": "Costurera",
+    "status": "Recibo trabajos de costura en mi casa",
+    "color": "#e74c3c",
+    "foto": "img/foto_comprimida.jpg",
+    "sobre_mi": "soy costurera particular ",
+    "telefono": "549110000000",
+    "skills": [
+        "costura",
+        "confeccion",
+        "diseño"
+    ]
+},
+
+{
+    "slug": "manuel-administracion",
+    "nombre": "manuel gutierrez",
+    "profesion": "administracion de empresas",
+    "status": "Disponible full time",
+    "color": "#4c5467",
+    "foto": "img/foto_comprimida.jpg",
+    "sobre_mi": "administro empresas",
+    "telefono": "2617149863",
+    "skills": [
+        "python",
+        "html",
+        "romo"
+    ]
+}
+]
