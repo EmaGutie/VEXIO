@@ -21,11 +21,26 @@ async function cargarPerfil() {
         document.getElementById('user-educacion').textContent = usuario.educacion;
         document.getElementById('user-ubicacion').textContent = usuario.ubicacion || "Argentina";
         
-        // Manejo del Status
+        // --- MANEJO DE DISPONIBILIDAD DINÁMICA (CORREGIDO) ---
         const statusPill = document.getElementById('user-status');
         if (statusPill) {
-            statusPill.textContent = usuario.status === 'activo' ? 'Disponible full time' : 'Consultar disponibilidad';
-            statusPill.className = `badge rounded-pill px-3 py-2 ${usuario.status === 'activo' ? 'bg-success' : 'bg-warning text-dark'}`;
+            const disp = usuario.disponibilidad ? usuario.disponibilidad.toLowerCase() : 'full-time';
+            statusPill.className = "badge rounded-pill px-3 py-2"; // Reset clases
+            
+            if (disp === 'full-time') {
+                statusPill.textContent = 'Disponible Full Time';
+                statusPill.classList.add('bg-dispo-full');
+            } else if (disp === 'part-time') {
+                statusPill.textContent = 'Disponible Part Time';
+                statusPill.classList.add('bg-dispo-part');
+            } else if (disp === 'freelance') {
+                statusPill.textContent = 'Proyectos Freelance';
+                statusPill.classList.add('bg-dispo-free');
+            } else {
+                // Fallback por si no hay dato o es distinto
+                statusPill.textContent = 'Disponible';
+                statusPill.classList.add('bg-dispo-full');
+            }
         }
 
         // --- SOLUCIÓN PARA LA FOTO/INICIALES ---
@@ -62,46 +77,43 @@ async function cargarPerfil() {
             });
         }
 
-        // --- CONTACTO PERSONALIZADO NEXU ---
+        // --- CONTACTO PERSONALIZADO VEXIO ---
         
-        // WhatsApp con mensaje predeterminado
+        // WhatsApp con mensaje predeterminado y COLOR VERDE (vía CSS)
         if (usuario.telefono) {
             const numLimpio = usuario.telefono.replace(/\+/g, '').replace(/\s/g, '');
-            const msjWA = encodeURIComponent(`Hola ${usuario.nombre}, vi tu perfil profesional en NEXUZ y me gustaría contactarte.`);
+            const msjWA = encodeURIComponent(`Hola ${usuario.nombre}, vi tu perfil profesional en VEXIO y me gustaría contactarte.`);
             document.getElementById('link-whatsapp').href = `https://wa.me/${numLimpio}?text=${msjWA}`;
         }
         
-        // Email personalizado (Gmail Web) con marca NEXU
+        // Email personalizado (Gmail Web) con marca VEXIO
         if (usuario.email) {
-            const asunto = encodeURIComponent(`Contacto desde NEXUZ | Oportunidad para ${usuario.nombre}`);
-            const cuerpo = encodeURIComponent(`Hola ${usuario.nombre},\n\nHe visto tu perfil en la plataforma NEXUZ y me interesa tu experiencia como ${usuario.profesion}.\n\n¿Podríamos coordinar una breve charla?\n\nSaludos.`);
+            const asunto = encodeURIComponent(`Contacto desde VEXIO | Oportunidad para ${usuario.nombre}`);
+            const cuerpo = encodeURIComponent(`Hola ${usuario.nombre},\n\nHe visto tu perfil en la plataforma VEXIO y me interesa tu experiencia como ${usuario.profesion}.\n\n¿Podríamos coordinar una breve charla?\n\nSaludos.`);
             
             const btnMail = document.getElementById('link-email');
             btnMail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${usuario.email}&su=${asunto}&body=${cuerpo}`;
         }
 
-    } catch (err) { console.error("Error cargando NEXUZ Profile:", err); }
+    } catch (err) { console.error("Error cargando Perfil VEXIO:", err); }
 }
 
-// ... (carga de perfil y supabase igual) ...
-
-// ... (carga de perfil y supabase igual) ...
-
+// --- FUNCIÓN DESCARGAR PDF ---
 function descargarPDF() {
     const elemento = document.getElementById("area-cv");
     const nombre = document.getElementById('user-nombre').textContent || 'Perfil';
 
-    // 1. Encendemos la marca de agua
+    // 1. Encendemos la marca de agua y modo PDF
     elemento.classList.add('modo-pdf-ats');
 
-    // 2. Esperamos 100ms para que el CSS se aplique bien antes de la captura
+    // 2. Esperamos un momento para el renderizado
     setTimeout(() => {
         const opt = {
             margin: [10, 10, 10, 10],
-            filename: `CV_${nombre.replace(/\s+/g, '_')}_NEXUZ.pdf`,
+            filename: `CV_${nombre.replace(/\s+/g, '_')}_VEXIO.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
-                scale: 2, // Bajamos a 2 para mayor compatibilidad de renderizado
+                scale: 2, 
                 useCORS: true,
                 allowTaint: true 
             },

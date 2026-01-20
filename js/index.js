@@ -99,11 +99,21 @@ const textosLegales = {
         </ul>`,
     
     terminos: `
-        <h2 class="fw-bold mb-3">Términos y Condiciones</h2>
-        <p>Al utilizar VEXIO, aceptas que la veracidad de la información cargada es responsabilidad exclusiva del usuario.</p>
-        <p><strong>Uso permitido:</strong> Esta plataforma es para fines profesionales. Queda prohibido el uso de lenguaje ofensivo o la carga de contenido que no sea estrictamente laboral.</p>
-        <p>VEXIO se reserva el derecho de eliminar perfiles que violen estas normas sin previo aviso.</p>`,
+    <h2 class="fw-bold mb-3">Términos y Condiciones - VEXIO</h2>
+    <p>Al utilizar nuestra plataforma, aceptas que la información profesional proporcionada sea pública para facilitar el contacto con reclutadores.</p>
     
+    <div class="alert alert-info mt-4" style="background-color: #f0f9ff; border: 1px solid #00d2ff; padding: 15px; border-radius: 10px;">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Nota importante:</strong> Estamos trabajando en una nueva actualización. Muy pronto podrás editar y eliminar tu perfil tú mismo desde tu propio panel.
+    </div>
+
+    <p class="mt-4"><strong>¿Deseas dar de baja tu perfil ahora?</strong><br> 
+    Envíanos un correo haciendo clic aquí: <br>
+    <a href="mailto:vexiosoporte@gmail.com?subject=Solicitud de Baja de Perfil - VEXIO&body=Hola equipo de VEXIO, solicito la eliminación de mi perfil profesional. Mi nombre o URL es: " 
+       class="text-primary fw-bold" 
+       style="text-decoration: underline;">
+       vexiosoporte@gmail.com
+    </a></p>`,
     cookies: `
         <h2 class="fw-bold mb-3">Política de Cookies</h2>
         <p>VEXIO utiliza cookies para garantizar que la plataforma funcione correctamente.</p>

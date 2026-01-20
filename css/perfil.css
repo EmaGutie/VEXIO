@@ -1,6 +1,6 @@
 /* --- ESTILOS WEB (BENTO) --- */
 :root { --user-color: #2563eb; --contact-color: #d97706; --brand-color: #00d2ff; }
-body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; }
+body {background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; }
 
 /* REFUERZO: El contenedor debe ser relativo para que la marca de agua sepa dónde centrarse */
 #area-cv { 
@@ -171,9 +171,9 @@ pre { white-space: pre-wrap; font-family: 'Inter', sans-serif; color: #475569; f
     display: block !important;
 }
 
-/* Si usas un pseudo-elemento para el texto, asegúrate de que diga NEXUZ */
+/* Si usas un pseudo-elemento para el texto, asegúrate de que diga VEXIO */
 .watermark-pdf::before {
-    content: "NEXUZ";
+    content: "VEXIO";
 }
 
 /* --- ESTILOS FOOTER LEGAL --- */
@@ -245,3 +245,22 @@ pre { white-space: pre-wrap; font-family: 'Inter', sans-serif; color: #475569; f
     cursor: pointer;
     color: #64748b;
 }
+
+/* Color oficial de WhatsApp */
+.btn-whatsapp {
+    background-color: #25D366 !important;
+    border-color: #25D366 !important;
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.btn-whatsapp:hover {
+    background-color: #128C7E !important; /* Un verde un poco más oscuro al pasar el mouse */
+    border-color: #128C7E !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.bg-dispo-full { background-color: #2ecc71 !important; color: white !important; }
+.bg-dispo-part { background-color: #f1c40f !important; color: #000 !important; }
+.bg-dispo-free { background-color: #1a365d !important; color: white !important; }

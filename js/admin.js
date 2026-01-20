@@ -20,14 +20,20 @@ const textosLegales = {
         <p>No vendemos bases de datos a terceros. La información es utilizada únicamente para conectar reclutadores con candidatos.</p>`,
     
     terminos: `
-        <h2 class="fw-bold mb-3">Términos y Condiciones</h2>
-        <p>Al utilizar esta plataforma, el usuario acepta que la veracidad de la información en su perfil es de su entera responsabilidad.</p>
-        <p><strong>¿Deseas eliminar tu perfil?</strong> Envíanos un correo desde tu dirección registrada a: <br>
-        <a href="mailto:${CONFIG_BRAND.emailSoporte}?subject=Solicitud de Baja de Perfil&body=Hola, solicito la eliminación de mi perfil en ${CONFIG_BRAND.nombre}." class="fw-bold text-primary">${CONFIG_BRAND.emailSoporte}</a></p>`,
+        <h2 class="fw-bold mb-3">Términos y Condiciones - VEXIO</h2>
+        <p>Al utilizar nuestra plataforma, aceptas que la información profesional proporcionada sea pública para facilitar el contacto con reclutadores.</p>
+        
+        <div class="alert alert-info py-2" style="font-size: 0.85rem; background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 8px; color: #0369a1; margin-top: 15px;">
+            <i class="bi bi-info-circle-fill me-1"></i>
+            <strong>Próximamente:</strong> Podrás editar y eliminar tu perfil tú mismo desde tu propio panel personal.
+        </div>
+
+        <p class="mt-3"><strong>¿Deseas dar de baja tu perfil ahora?</strong> Envíanos un correo a: <br>
+        <a href="mailto:${CONFIG_BRAND.emailSoporte}?subject=Solicitud de Baja de Perfil - VEXIO&body=Hola equipo de VEXIO, solicito la eliminación de mi perfil profesional. Mi nombre o URL es: " class="fw-bold text-primary">${CONFIG_BRAND.emailSoporte}</a></p>`,
     
     cookies: `
         <h2 class="fw-bold mb-3">Política de Cookies</h2>
-        <p>Utilizamos cookies técnicas para mantener la sesión de usuario y mejorar la velocidad de carga del directorio de talentos de ${CONFIG_BRAND.nombre}.</p>`
+        <p>Utilizamos cookies técnicas para mantener la sesión de usuario y mejorar la velocidad de carga en ${CONFIG_BRAND.nombre}.</p>`
 };
 
 window.mostrarModal = function(tipo) {
@@ -148,6 +154,7 @@ if (formPerfil) {
             const skillsText = document.getElementById('skills')?.value || "";
             const skillsArray = skillsText.split(',').map(s => s.trim()).filter(s => s !== "");
 
+            // RECOPILACIÓN DE DATOS CON DISPONIBILIDAD INCLUIDA
             const { error: insertError } = await supabaseClient
                 .from('usuarios')
                 .insert([{
@@ -162,6 +169,7 @@ if (formPerfil) {
                     skills: JSON.stringify(skillsArray),
                     foto: fotoUrlFinal,
                     status: "activo",
+                    disponibilidad: document.getElementById('disponibilidad').value, // CAMPO NUEVO
                     ubicacion: document.getElementById('ubicacion')?.value || "Argentina"
                 }]);
 
