@@ -1,3 +1,4 @@
+// Configuración de Supabase (usando la variable global cargada desde el HTML)
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -42,20 +43,16 @@ async function cargarPerfil() {
             }
         }
 
-        // --- SOLUCIÓN PARA LA FOTO/INICIALES (REFORZADO) ---
+        // --- SOLUCIÓN PARA LA FOTO/INICIALES (EL FIX QUE BUSCAMOS) ---
         const img = document.getElementById('user-foto');
         if (img) {
             const nombreCodificado = encodeURIComponent(usuario.nombre || "Usuario");
             const avatarUrl = `https://ui-avatars.com/api/?name=${nombreCodificado}&background=00d2ff&color=fff&size=200&bold=true`;
 
-            // Si hay una foto en la base de datos, intentamos cargarla
             if (usuario.foto && usuario.foto.trim() !== "" && usuario.foto !== "null") {
                 img.src = usuario.foto;
-                img.crossOrigin = "anonymous"; 
-                // Si la imagen de la DB falla (link roto), ponemos el avatar
                 img.onerror = () => { img.src = avatarUrl; };
             } else {
-                // Si no hay foto directamente ponemos el avatar
                 img.src = avatarUrl;
             }
         }
@@ -82,42 +79,38 @@ async function cargarPerfil() {
             });
         }
 
-        // WhatsApp
+        // WhatsApp y Email
         if (usuario.telefono) {
             const numLimpio = usuario.telefono.replace(/\+/g, '').replace(/\s/g, '');
-            const msjWA = encodeURIComponent(`Hola ${usuario.nombre}, vi tu perfil profesional en VEXIO y me gustaría contactarte.`);
+            const msjWA = encodeURIComponent(`Hola ${usuario.nombre}, vi tu perfil en VEXIO...`);
             document.getElementById('link-whatsapp').href = `https://wa.me/${numLimpio}?text=${msjWA}`;
         }
         
-        // Email
         if (usuario.email) {
-            const asunto = encodeURIComponent(`Contacto desde VEXIO | Oportunidad para ${usuario.nombre}`);
-            const cuerpo = encodeURIComponent(`Hola ${usuario.nombre},\n\nHe visto tu perfil en la plataforma VEXIO y me interesa tu experiencia como ${usuario.profesion}.\n\n¿Podríamos coordinar una breve charla?\n\nSaludos.`);
             const btnMail = document.getElementById('link-email');
-            btnMail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${usuario.email}&su=${asunto}&body=${cuerpo}`;
+            btnMail.href = `mailto:${usuario.email}`;
         }
 
     } catch (err) { console.error("Error cargando Perfil VEXIO:", err); }
 }
 
-function descargarPDF() {
+// Función global para que el botón del HTML la vea
+window.descargarPDF = function() {
     const elemento = document.getElementById("area-cv");
     const nombre = document.getElementById('user-nombre').textContent || 'Perfil';
     elemento.classList.add('modo-pdf-ats');
 
-    setTimeout(() => {
-        const opt = {
-            margin: [10, 10, 10, 10],
-            filename: `CV_${nombre.replace(/\s+/g, '_')}_VEXIO.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+    const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `CV_${nombre.replace(/\s+/g, '_')}_VEXIO.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-        html2pdf().set(opt).from(elemento).save().then(() => {
-            elemento.classList.remove('modo-pdf-ats');
-        });
-    }, 100); 
+    html2pdf().set(opt).from(elemento).save().then(() => {
+        elemento.classList.remove('modo-pdf-ats');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', cargarPerfil);
