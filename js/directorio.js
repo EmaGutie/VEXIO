@@ -1,40 +1,48 @@
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
-const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function cargarDirectorio() {
-    const contenedor = document.getElementById('contenedor-talentos');
+    const contenedor = document.getElementById('usuarios-lista');
+    if (!contenedor) return;
 
-    // 1. Pedimos todos los usuarios a Supabase
-    const { data: usuarios, error } = await _supabase
-        .from('usuarios')
-        .select('nombre, profesion, foto, slug, color');
+    try {
+        const { data: usuarios, error } = await supabaseClient
+            .from('usuarios').select('*').order('created_at', { ascending: false });
 
-    if (error) {
-        contenedor.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-        return;
-    }
+        if (error) throw error;
+        contenedor.innerHTML = "";
 
-    contenedor.innerHTML = ""; // Limpiamos el spinner
+        usuarios.forEach(user => {
+            const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre)}&background=00d2ff&color=fff&size=200&bold=true`;
+            const fotoUrl = (user.foto && user.foto.startsWith('http')) ? user.foto : fallback;
 
-    // 2. Creamos la tarjeta para cada usuario
-    usuarios.forEach(user => {
-        const card = document.title = `
-            <div class="col-md-4 mb-4">
-                <div class="card card-perfil h-100 shadow-sm">
-                    <img src="${user.foto || 'img/default.jpg'}" class="card-img-top img-directorio" alt="${user.nombre}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">${user.nombre}</h5>
-                        <p class="card-text text-secondary">${user.profesion}</p>
-                        <a href="usuario.html?user=${user.slug}" class="btn btn-primary w-100" style="background-color: ${user.color}">
-                            Ver Perfil Completo
-                        </a>
+            const col = document.createElement('div');
+            col.className = "col-md-4 mb-4";
+            
+            // Creamos el contenido
+            col.innerHTML = `
+                <div class="card-talento text-center p-4">
+                    <div class="mb-3">
+                        <img src="${fotoUrl}" 
+                            class="rounded-circle border border-3 border-info img-estilo-fijo" 
+                            style="width:100px; height:100px; object-fit:cover;">
                     </div>
+                    <h5 class="fw-bold mb-1">${user.nombre}</h5>
+                    <p class="text-muted small">${user.profesion}</p>
+                    <a href="usuario.html?user=${user.slug}" class="btn-premium-sm">Ver Portfolio</a>
                 </div>
-            </div>
-        `;
-        contenedor.innerHTML += card;
-    });
-}
+            `;
 
-cargarDirectorio();
+            // Agregamos el manejador de errores manualmente para evitar el titileo del atributo HTML
+            const imgElement = col.querySelector('img');
+            imgElement.onerror = function() {
+                this.src = fallback;
+                this.onerror = null; // Detiene cualquier bucle de error
+            };
+
+            contenedor.appendChild(col);
+        });
+    } catch (err) { console.error("Error Directorio:", err); }
+}
+document.addEventListener('DOMContentLoaded', cargarDirectorio);

@@ -1,153 +1,142 @@
-const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co'; 
-const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV'; 
-const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
+const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-let usuariosCache = [];
+let todosLosUsuarios = []; 
 
-const usuariosSimulacro = [
-    {
-        nombre: "Lucía Fernández",
-        profesion: "UX/UI Designer & Frontend",
-        slug: "#",
-        color: "#7c3aed",
-        skills: "Figma, React, Tailwind",
-        foto: "https://i.pravatar.cc/150?u=lucia"
-    },
-    {
-        nombre: "Marcos Paz",
-        profesion: "Data Analyst",
-        slug: "#",
-        color: "#10b981",
-        skills: "SQL, Python, PowerBI",
-        foto: "https://i.pravatar.cc/150?u=marcos"
-    }
-];
-
-// --- FUNCIONES DE CARGA ---
-async function cargarDirectorio() {
-    try {
-        const { data, error } = await _supabase
-            .from('usuarios')
-            .select('nombre, profesion, slug, foto, color, skills');
-
-        const reales = (data && data.length > 0) ? data : [];
-        usuariosCache = [...reales, ...usuariosSimulacro];
-        renderizarUsuarios(usuariosCache);
-    } catch (err) {
-        console.warn("Usando datos de simulacro");
-        usuariosCache = usuariosSimulacro;
-        renderizarUsuarios(usuariosCache);
-    }
-}
-
-function renderizarUsuarios(lista) {
+async function cargarTalentos() {
     const contenedor = document.getElementById('contenedor-usuarios');
     if (!contenedor) return;
-    contenedor.innerHTML = '';
 
-    lista.forEach(user => {
-        const urlDestino = (user.slug && user.slug !== '#') ? `./usuario.html?user=${user.slug}` : './admin.html';
-        const textoBoton = (user.slug && user.slug !== '#') ? 'Ver Portfolio' : '¡Crea el tuyo!';
-        
-        let skillsHTML = '';
-        if (user.skills) {
-            let skillsArray = [];
-            try {
-                skillsArray = user.skills.startsWith('[') ? JSON.parse(user.skills) : user.skills.split(',').map(s => s.trim());
-            } catch (e) {
-                skillsArray = user.skills.split(',').map(s => s.trim());
-            }
-            skillsHTML = skillsArray.slice(0, 3).map(s => `<span class="badge-skill">${s}</span>`).join('');
+    try {
+        // Se eliminó .order('created_at') porque la columna no existe en la tabla
+        const { data, error } = await supabaseClient
+            .from('usuarios')
+            .select('*');
+
+        if (error) {
+            console.error("Error detallado de Supabase:", error);
+            throw error;
         }
 
-        contenedor.innerHTML += `
-            <div class="col-md-4 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm text-center p-4" style="border-top: 5px solid ${user.color || '#3b82f6'} !important; border-radius: 15px;">
-                    <img src="${user.foto}" class="rounded-circle mx-auto mb-3 shadow-sm" style="width: 90px; height: 90px; object-fit: cover; border: 3px solid white;" onerror="this.src='https://ui-avatars.com/api/?name=${user.nombre}'">
-                    <h5 class="fw-bold mb-1">${user.nombre}</h5>
-                    <p class="text-muted small mb-3">${user.profesion}</p>
-                    <div class="mb-3">${skillsHTML}</div>
-                    <a href="${urlDestino}" class="btn btn-sm btn-primary rounded-pill px-4">${textoBoton}</a>
-                </div>
+        todosLosUsuarios = data || [];
+        renderizarTarjetas(todosLosUsuarios);
+        configurarFiltros(); 
+    } catch (err) {
+        console.error("Fallo la carga:", err.message);
+        contenedor.innerHTML = `
+            <div class="text-center py-5">
+                <p class="text-danger">Error al conectar con la base de datos.</p>
+                <small class="text-muted">Detalle: ${err.message}</small>
             </div>`;
+    }
+}
+
+function renderizarTarjetas(usuarios) {
+    const contenedor = document.getElementById('contenedor-usuarios');
+    if (!contenedor) return;
+    
+    contenedor.innerHTML = '';
+
+    if (!usuarios || usuarios.length === 0) {
+        contenedor.innerHTML = '<p class="text-center text-muted py-5">No se encontraron perfiles en esta categoría.</p>';
+        return;
+    }
+
+    const categorias = [...new Set(usuarios.map(u => u.categoria))];
+
+    categorias.forEach(cat => {
+        const filtrados = usuarios.filter(u => u.categoria === cat);
+        
+        const seccion = document.createElement('div');
+        seccion.className = 'col-12 mb-5';
+        seccion.innerHTML = `
+            <div class="categoria-header mb-4">
+                <h3 class="fw-bold mb-0" style="color: #0f172a;">${cat}</h3>
+                <small class="text-muted">${filtrados.length} profesional${filtrados.length > 1 ? 'es' : ''} disponible${filtrados.length > 1 ? 's' : ''}</small>
+            </div>
+            <div class="row g-4">
+                ${filtrados.map(u => {
+                    // Lógica para iniciales: usa las del nombre si no hay foto cargada
+                    const iniciales = u.nombre ? u.nombre.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
+                    const fotoHtml = u.foto 
+                        ? `<img src="${u.foto}" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px; background: #f8f9fa;">`
+                        : `<div class="rounded-circle d-flex align-items-center justify-content-center bg-light text-primary fw-bold" style="width: 80px; height: 80px; font-size: 1.5rem; border: 2px solid #e2e8f0;">${iniciales}</div>`;
+
+                    return `
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="background: white;">
+                            <div class="p-4 text-center">
+                                <div class="mb-3 d-inline-block p-1 rounded-circle" style="border: 2px solid #00d2ff;">
+                                    ${fotoHtml}
+                                </div>
+                                <h5 class="fw-bold mb-1">${u.nombre}</h5>
+                                <p class="text-muted small mb-3" style="min-height: 40px;">${u.profesion}</p>
+                                <a href="usuario.html?user=${u.slug}" class="btn btn-dark w-100 rounded-pill py-2 fw-bold">Ver Portfolio</a>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        `;
+        contenedor.appendChild(seccion);
     });
 }
 
-// --- BUSCADOR ---
-const inputBuscador = document.getElementById('buscador');
-if (inputBuscador) {
-    inputBuscador.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase();
-        const filtrados = usuariosCache.filter(u => 
-            u.nombre.toLowerCase().includes(termino) || 
-            u.profesion.toLowerCase().includes(termino) ||
-            (u.skills && u.skills.toLowerCase().includes(termino))
-        );
-        renderizarUsuarios(filtrados);
+function configurarFiltros() {
+    const buscador = document.getElementById('buscador');
+    const chips = document.querySelectorAll('.filter-chip');
+
+    if (buscador) {
+        buscador.addEventListener('input', (e) => {
+            const termino = e.target.value.toLowerCase();
+            const filtrados = todosLosUsuarios.filter(u => 
+                u.nombre.toLowerCase().includes(termino) || 
+                u.profesion.toLowerCase().includes(termino)
+            );
+            renderizarTarjetas(filtrados);
+        });
+    }
+
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+
+            const cat = chip.getAttribute('data-category');
+            const filtrados = (cat === 'all') 
+                ? todosLosUsuarios 
+                : todosLosUsuarios.filter(u => u.categoria === cat);
+            
+            renderizarTarjetas(filtrados);
+        });
     });
 }
 
-// --- LÓGICA LEGAL ---
-const textosLegales = {
-    privacidad: `
-        <h2 class="fw-bold mb-3">Política de Privacidad</h2>
-        <p>En <strong>VEXIO</strong>, respetamos tu privacidad. Los datos recolectados (Nombre, Profesión, Skills y Contacto) se utilizan exclusivamente para la creación de tu perfil público.</p>
-        <ul class="text-muted small">
-            <li>No compartimos tus datos de contacto con empresas de marketing.</li>
-            <li>Tienes derecho a solicitar la baja de tu perfil en cualquier momento.</li>
-            <li>Usamos cifrado de extremo a extremo a través de Supabase para proteger tu información.</li>
-        </ul>`,
-    
-    terminos: `
-    <h2 class="fw-bold mb-3">Términos y Condiciones - VEXIO</h2>
-    <p>Al utilizar nuestra plataforma, aceptas que la información profesional proporcionada sea pública para facilitar el contacto con reclutadores.</p>
-    
-    <div class="alert alert-info mt-4" style="background-color: #f0f9ff; border: 1px solid #00d2ff; padding: 15px; border-radius: 10px;">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        <strong>Nota importante:</strong> Estamos trabajando en una nueva actualización. Muy pronto podrás editar y eliminar tu perfil tú mismo desde tu propio panel.
-    </div>
 
-    <p class="mt-4"><strong>¿Deseas dar de baja tu perfil ahora?</strong><br> 
-    Envíanos un correo haciendo clic aquí: <br>
-    <a href="mailto:vexiosoporte@gmail.com?subject=Solicitud de Baja de Perfil - VEXIO&body=Hola equipo de VEXIO, solicito la eliminación de mi perfil profesional. Mi nombre o URL es: " 
-       class="text-primary fw-bold" 
-       style="text-decoration: underline;">
-       vexiosoporte@gmail.com
-    </a></p>`,
-    cookies: `
-        <h2 class="fw-bold mb-3">Política de Cookies</h2>
-        <p>VEXIO utiliza cookies para garantizar que la plataforma funcione correctamente.</p>
-        <p><strong>¿Qué cookies usamos?</strong></p>
-        <ul class="text-muted small">
-            <li><strong>Técnicas:</strong> Para recordar que has iniciado sesión en el panel de administrador.</li>
-            <li><strong>De Rendimiento:</strong> Para que el buscador de talentos sea más rápido en tu navegador.</li>
-        </ul>
-        <p>No rastreamos tu comportamiento fuera de nuestra plataforma.</p>`
-};
 
-window.mostrarModal = function(tipo, event) {
-    if (event) event.preventDefault();
-    const modal = document.getElementById('modalLegal');
-    const contenido = document.getElementById('contenidoLegal');
-    if (modal && contenido) {
-        contenido.innerHTML = textosLegales[tipo];
+    function mostrarModal(tipo) {
+        const modal = document.getElementById('modalLegal');
+        const contenido = document.getElementById('contenidoLegal');
+        
+        const textos = {
+            'privacidad': '<h3 style="color:#00d2ff">Política de Privacidad</h3><p>En VEXIO, protegemos tus datos personales. Tu información profesional solo se comparte con fines laborales dentro de la plataforma.</p>',
+            'terminos': '<h3 style="color:#00d2ff">Términos y Condiciones</h3><p>Al utilizar VEXIO, aceptas que la veracidad de la información en tu perfil es tu responsabilidad. Nos reservamos el derecho de moderar perfiles.</p>'
+        };
+
+        contenido.innerHTML = textos[tipo];
         modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
     }
-};
 
-window.cerrarModal = function() {
-    const modal = document.getElementById('modalLegal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+    function cerrarModal() {
+        document.getElementById('modalLegal').style.display = 'none';
     }
-};
 
-window.addEventListener('click', (e) => {
-    const modal = document.getElementById('modalLegal');
-    if (e.target === modal) cerrarModal();
-});
+    // Cerrar al hacer clic fuera
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalLegal');
+        if (event.target == modal) { cerrarModal(); }
+    }
 
-// Iniciar
-cargarDirectorio();
+
+document.addEventListener('DOMContentLoaded', cargarTalentos);

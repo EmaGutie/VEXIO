@@ -11,88 +11,124 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="no-print" style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <div class="no-print">
         <a href="index.html" class="btn-volver-glass">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Inicio</span>
+            <i class="bi bi-house-door-fill"></i> Inicio
         </a>
     </div>
 
-    <div class="container bento-container py-5" id="area-cv">
-        <div class="watermark-pdf"></div> 
+    <div class="container bento-container" id="area-cv" style="position: relative;">
+        
+        <div id="gestion-dueno" class="no-print" style="display: none; position: absolute; top: 20px; right: 20px; z-index: 1000;">
+            <div class="d-flex align-items-center gap-2">
+                <button onclick="compartirPerfil()" class="btn btn-primary shadow-sm rounded-pill px-3 fw-bold d-flex align-items-center gap-2" style="font-size: 0.85rem; height: 38px;">
+                    <i class="bi bi-share"></i> <span>Compartir</span>
+                </button>
+                
+                <a href="admin.html" class="btn btn-light border shadow-sm rounded-pill px-3 fw-bold d-flex align-items-center gap-2" style="font-size: 0.85rem; height: 38px;">
+                    <i class="bi bi-pencil-square"></i> <span>Editar</span>
+                </a>
+                
+                <button onclick="eliminarPerfilDefinitivo()" class="btn btn-outline-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; padding: 0;">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </div>
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="bento-card text-center h-100">
+                <div class="bento-card text-center">
                     <img id="user-foto" src="" class="profile-img mb-3" alt="Perfil">
-                    
-                    <h2 id="user-nombre" class="fw-bold mb-1">Cargando...</h2>
-                    <p id="user-profesion" class="text-muted mb-3"></p>
-                    <div class="mb-4"><span id="user-status" class="badge rounded-pill px-3 py-2"></span></div>
+                    <h2 id="user-nombre" class="fw-bold h4 mb-1">Cargando...</h2>
+                    <p id="user-profesion" class="text-muted small mb-2"></p>
+                    <div id="user-status" class="status-pill mb-3"></div>
                     
                     <div class="text-start border-top pt-3">
-                        <p class="small text-muted mb-1"><i class="bi bi-geo-alt-fill"></i> Ubicación</p>
-                        <p id="user-ubicacion" class="fw-medium mb-3">Argentina</p>
+                        <p class="section-title"><i class="bi bi-geo-alt-fill"></i> Ubicación</p>
+                        <p id="user-ubicacion" class="fw-medium small">Argentina</p>
                     </div>
 
                     <div class="mt-4 d-grid gap-2 no-print">
-                        <a id="link-whatsapp" href="#" target="_blank" class="btn btn-whatsapp rounded-4 py-2 fw-bold text-white">
-                            <i class="bi bi-whatsapp me-2"></i> WhatsApp
+                        <a id="link-whatsapp" href="#" target="_blank" class="btn-whatsapp">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
                         </a>
-                        <a id="link-email" href="#" target="_blank" class="btn btn-primary rounded-4 py-2 fw-bold">
-                            <i class="bi bi-envelope-at me-2"></i> Enviar Correo
+                        <a id="link-email" href="#" class="btn-primary">
+                            <i class="bi bi-envelope"></i> Correo
                         </a>
-                        <button onclick="descargarPDF()" class="btn btn-dark w-100 rounded-4 py-2 fw-bold mt-2">
-                            <i class="bi bi-file-earmark-pdf me-2"></i> Descargar CV (PDF)
-                        </button>
-                        <button onclick="window.print()" class="btn btn-light w-100 rounded-4 py-2 text-muted small">
-                            <i class="bi bi-printer me-2"></i> Imprimir
+
+                        <div class="profile-actions">
+                            <div class="pdf-notice">
+                                <div class="notice-icon">💡</div>
+                                <div class="notice-content">
+                                    <strong>Tip para un CV a prueba de filtros ATS:</strong> Al guardar, ve a <em>"Más ajustes"</em> y desactiva <em>"Cabeceras y pies de página"</em> para eliminar la URL local y fechas.
+                                </div>
+                                </div> 
+                            </div>
+
+                        <button onclick="descargarPDF()" class="btn-dark">
+                            <i class="bi bi-file-earmark-pdf"></i> Descargar CV
                         </button>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-8">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="bento-card">
-                            <p class="section-title text-primary fw-bold">PERFIL PROFESIONAL</p>
-                            <p id="user-sobre-mi" class="lead mb-0"></p>
-                        </div>
+                <div class="d-flex flex-column gap-4">
+                    <div class="bento-card">
+                        <p class="section-title">Perfil Profesional</p>
+                        <p id="user-sobre-mi" class="mb-0 text-secondary"></p>
                     </div>
-                    <div class="col-12">
-                        <div class="bento-card">
-                            <p class="section-title text-primary fw-bold">HABILIDADES Y COMPETENCIAS</p>
-                            <div id="user-skills"></div>
-                        </div>
+                    <div class="bento-card">
+                        <p class="section-title">Habilidades</p>
+                        <div id="user-skills" class="d-flex flex-wrap"></div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="bento-card h-100">
-                            <p class="section-title text-primary fw-bold">EXPERIENCIA LABORAL</p>
-                            <pre id="user-experiencia" class="mb-0"></pre>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="bento-card h-100">
+                                <p class="section-title">Experiencia</p>
+                                <pre id="user-experiencia"></pre>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="bento-card h-100">
-                            <p class="section-title text-primary fw-bold">FORMACIÓN ACADÉMICA</p>
-                            <pre id="user-educacion" class="mb-0"></pre>
+                        <div class="col-md-6">
+                            <div class="bento-card h-100">
+                                <p class="section-title">Educación</p>
+                                <pre id="user-educacion"></pre>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="no-print mt-4" style="background-color: #f0f7ff; border: 1px dashed #007bff; padding: 15px; border-radius: 12px; text-align: center;">
-                    <p style="margin: 0; color: #007bff; font-size: 0.9rem;">
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        <strong>¡Próximamente!</strong> Podrás editar y eliminar tu perfil directamente desde este panel.
-                    </p>
-                    <p style="margin: 0; color: #6c757d; font-size: 0.85rem; line-height: 1.4;">
-                        <i class="bi bi-shield-lock me-2"></i>
-                        Por el momento, si deseás <strong>dar de baja tu perfil</strong>, por favor dirigite a la sección de <strong>Términos y Condiciones</strong> en el inicio de la web para contactar a nuestro equipo de soporte.
-                    </p>
-                </div>
-            </div> 
-        </div> 
-    </div> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="js/perfil.js?v=4.0"></script>
+    <script src="js/perfil.js"></script>
+
+    <script>
+    function compartirPerfil() {
+    // 1. Obtenemos la URL completa actual (la que funciona)
+    const urlReal = window.location.href;
+    
+    // 2. Extraemos el nombre para mostrarlo en el mensaje
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('user') || "perfil";
+
+    // 3. Copiamos la URL real para que el link NO se rompa al pegarlo
+    navigator.clipboard.writeText(urlReal).then(() => {
+        Swal.fire({
+            title: '¡Enlace Copiado!',
+            // Mostramos el nombre lindo en el mensaje, pero copiamos el link funcional
+            html: `Ya podés compartir el perfil de <strong style="color:#00d2ff">${username}</strong>`,
+            icon: 'success',
+            background: '#1a1a1a',
+            color: '#ffffff',
+            confirmButtonColor: '#00d2ff',
+            timer: 2500,
+            showConfirmButton: false
+            });
+        });
+    }
+    </script>
 </body>
 </html>

@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin.css">
     <style>
-        /* Estilos críticos para el Modal Pop-up centrado */
         .modal-legal {
             display: none;
             position: fixed;
@@ -32,7 +31,7 @@
             width: 90%;
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            color: #333; /* Para asegurar legibilidad */
+            color: #333;
         }
         .close-modal {
             position: absolute;
@@ -42,22 +41,48 @@
             cursor: pointer;
             color: #64748b;
         }
+        .select-premium {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border-radius: 12px !important;
+            padding: 12px !important;
+        }
+        .select-premium option {
+            background: #1a1a1a;
+            color: white;
+        }
+        .btn-logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: rgba(255,0,0,0.5);
+            color: white;
+        }
     </style>
 </head>
 <body>
 
 <div class="main-overlay">
+    
     <nav class="navbar py-3 mb-4">
         <div class="container justify-content-center">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <span class="logo-text fs-3">VEXIO</span>
-                <svg class="logo-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="18" cy="6" r="3" fill="#00D2FF"/>
-                    <circle cx="6" cy="18" r="3" fill="#00D2FF"/>
-                    <path d="M8 16L16 8" stroke="#00D2FF" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="6" cy="6" r="3" stroke="#00D2FF" stroke-width="1.5"/>
-                    <circle cx="18" cy="18" r="3" stroke="#00D2FF" stroke-width="1.5"/>
-                </svg>
+                <div class="logo-container-top">
+                    <span class="logo-text-top">VEXIO</span>
+                    <span class="logo-icon-top">%</span>
+                </div>
             </a>
         </div>
     </nav>
@@ -69,20 +94,19 @@
                 <div id="main-card" class="glass-card">
                     <div class="text-center mb-5">
                         <h2 class="title-premium">Crea tu Portfolio</h2>
-                        <p class="subtitle-premium">Configura tu identidad profesional en segundos</p>
+                        <p class="subtitle-premium">Configurá tu identidad profesional en segundos</p>
                     </div>
 
                     <form id="form-perfil">
                         <div class="row g-4">
                             <div class="col-md-3 text-center border-end-glass">
-                                <label class="label-premium">Tu Foto</label>
                                 <div class="img-container mb-3">
                                     <img id="img-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300D2FF' stroke-width='1'%3E%3Ccircle cx='12' cy='7' r='4'%3E%3C/circle%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3C/svg%3E">
                                 </div>
                                 <input type="file" id="foto" accept="image/*" style="display: none;">
-                                <button type="button" class="btn-glass-secondary w-100" onclick="document.getElementById('foto').click()">
+                                <label for="foto" class="btn-upload-custom w-100">
                                     <i class="bi bi-camera me-2"></i>Elegir Foto
-                                </button>
+                                </label>
                             </div>
                             
                             <div class="col-md-9">
@@ -91,46 +115,59 @@
                                 
                                 <label class="label-premium">URL Personalizada (Link Único)</label>
                                 <div class="input-group">
-                                    <span class="group-text-glass">vexio.com/</span>
+                                    <span class="group-text-glass">vexio.com.ar/</span>
                                     <input type="text" id="slug" class="input-premium" placeholder="ej: juan-perez" required>
                                 </div>
                                 <div id="slug-feedback" class="mt-1 small fw-bold" style="display: none; padding-left: 5px;"></div>
                             </div>
 
-                            <div class="col-md-3">
-                                <label class="label-premium">Profesión</label>
-                                <input type="text" id="profesion" class="input-premium" placeholder="Ej: Electricista" required>
+                            <div class="col-md-6">
+                                <label class="label-premium">Profesión / Título</label>
+                                <input type="text" id="profesion" class="input-premium" placeholder="Ej: Técnico, Salud, Licenciado" required>
                             </div>
 
+                            <div class="col-md-6">
+                                <label class="label-premium">Categoría Profesional</label>
+                                <select id="categoria" class="form-select select-premium" required>
+                                    <option value="" disabled selected>Seleccioná tu rubro...</option>
+                                    <option value="Administración">Administración/Contable</option>
+                                    <option value="Ventas">Ventas y Comercial</option>
+                                    <option value="Atención al cliente">Atención al cliente</option>
+                                    <option value="IT">IT & Software</option>
+                                    <option value="Salud">Salud</option>
+                                    <option value="Técnicos">Oficios y Técnicos</option>
+                                    <option value="Recursos Humanos">Recursos Humanos</option>
+                                    <option value="Gastronomía">Gastronomía y Turismo</option>
+                                    <option value="Logística">Logística y Distribución</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="label-premium">Ubicación</label>
                                 <input type="text" id="ubicacion" class="input-premium" placeholder="Mendoza, Argentina" required>
                             </div>
-                            <div class="col-md-3">
-                                <label class="label-premium">WhatsApp</label>
+                            <div class="col-md-4">
+                                <label class="label-premium">Teléfono</label>
                                 <input type="text" id="telefono" class="input-premium" placeholder="549261000000" required>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="label-premium">Correo</label>
                                 <input type="email" id="email" class="input-premium" placeholder="tu@email.com" required>
                             </div>
                             
-
-                             <div class="mb-3">
-                                <label class="form-label fw-bold">Disponibilidad Laboral</label>
-                                <select id="disponibilidad" class="form-select rounded-3">
-                                    <option value="full-time">Full Time</option>
-                                    <option value="part-time">Part Time</option>
-                                    <option value="freelance">Freelance</option>
+                            <div class="col-md-12">
+                                <label class="label-premium">Disponibilidad Laboral</label>
+                                <select id="disponibilidad" class="form-select select-premium">
+                                    <option value="jornada completa">Full Time</option>
+                                    <option value="tiempo parcial">Part Time</option>
+                                    <option value="freelance">Freelance / Proyectos</option>
                                 </select>
                             </div>
 
-
-
                             <div class="col-md-12">
                                 <label class="label-premium">Habilidades (Separadas por coma)</label>
-                                <input type="text" id="skills" class="input-premium" placeholder="Ej: Liderazgo, AutoCAD, Resolución de problemas">
+                                <input type="text" id="skills" class="input-premium" placeholder="Ej: Liderazgo, AutoCAD, Excel">
                             </div>
 
                             <div class="col-md-12">
@@ -153,15 +190,15 @@
                                         <input class="form-check-input" type="checkbox" id="checkConsentimiento" required>
                                         <label class="form-check-label text-white-50" for="checkConsentimiento" style="font-size: 0.85rem; cursor: pointer;">
                                             Acepto que mis datos profesionales sean visibles en la red de <strong>VEXIO</strong> y puedan ser compartidos con reclutadores según la 
-                                            <a href="#" onclick="mostrarModal('privacidad', event)" style="color: #00d2ff; text-decoration: underline;">Política de Privacidad</a>.
+                                            <a href="javascript:void(0)" onclick="mostrarModal('privacidad')" style="color: #00d2ff; text-decoration: underline; font-weight: 600;">Política de Privacidad</a>.
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-12 mt-2">
-                                <button type="submit" class="btn-premium-action w-100">
-                                    <i class="bi bi-shield-check me-2"></i>PUBLICAR EN VEXIO
+                                <button type="submit" class="btn-premium-action">
+                                    <i class="bi bi-shield-lock-fill"></i> PUBLICAR EN VEXIO
                                 </button>
                             </div>
                         </div>
@@ -173,18 +210,15 @@
                         <i class="bi bi-check-circle-fill" style="font-size: 3rem; color: #00d2ff;"></i>
                     </div>
                     <h2 class="title-premium mb-4">¡Perfil Activo!</h2>
-                    
                     <div class="mb-4 py-3 px-3 rounded-4" style="background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3);">
                         <p class="mb-0" style="color: #00d2ff; font-size: 0.9rem;">
                             <i class="bi bi-info-circle-fill me-2"></i>
-                            <strong>SISTEMA LISTO.</strong> Ya podés compartir tu link profesional. ¡No lo pierdas!
+                            <strong>SISTEMA LISTO.</strong> Ya podés compartir tu link profesional.
                         </p>
                     </div>
-
                     <input type="text" id="link-generado" class="input-premium text-center mb-4" readonly>
-                    
                     <div class="d-grid gap-3 col-md-8 mx-auto">
-                        <button class="btn-premium-action py-3" onclick="copiarAlPortapapeles()">
+                        <button type="button" class="btn-premium-action py-3" onclick="copiarAlPortapapeles()">
                             COPIAR ENLACE
                         </button>
                         <a id="btn-ver-perfil" href="#" target="_blank" class="btn btn-outline-light rounded-pill py-2">
@@ -193,7 +227,6 @@
                         <button onclick="location.reload()" class="btn btn-link text-white-50 mt-2">Crear otro perfil</button>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -203,9 +236,42 @@
     <div class="modal-content-legal">
         <span class="close-modal" onclick="cerrarModal()">&times;</span>
         <div id="contenidoLegal"></div>
-        <button onclick="cerrarModal()" class="btn btn-primary w-100 mt-4" style="border-radius: 10px; background: #00d2ff; border: none;">Entendido</button>
+        <button onclick="cerrarModal()" class="btn btn-outline-info w-100 mt-4 rounded-pill">Entendido</button>
     </div>
 </div>
+
+<script>
+function mostrarModal(tipo) {
+    const modal = document.getElementById('modalLegal');
+    const contenido = document.getElementById('contenidoLegal');
+    
+    // Si los elementos existen, inyectamos el texto
+    if (modal && contenido) {
+        const textos = {
+            'privacidad': '<h3 style="color:#00d2ff">Política de Privacidad</h3><p>En VEXIO, protegemos tus datos personales. Al usar nuestra plataforma, aceptas que tu perfil sea público para fines profesionales y de reclutamiento...</p>',
+            'terminos': '<h3 style="color:#00d2ff">Términos y Condiciones</h3><p>El uso de VEXIO implica la aceptación de nuestras normas de comunidad. El usuario es responsable de la veracidad de la información cargada...</p>'
+        };
+
+        contenido.innerHTML = textos[tipo] || 'Información no disponible';
+        modal.style.display = 'flex';
+    }
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('modalLegal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Cerrar si hacen clic fuera del cuadradito blanco
+window.onclick = function(event) {
+    const modal = document.getElementById('modalLegal');
+    if (event.target == modal) {
+        cerrarModal();
+    }
+}
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
