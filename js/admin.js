@@ -62,21 +62,21 @@ async function cargarDatosParaEditar(userAuth) {
     }
 }
 
-// 4. FUNCIÓN PARA SUBIR FOTO (La parte nueva)
+// 4. FUNCIÓN PARA SUBIR FOTO (Corregida con el nombre FOTOS_PERFILES)
 async function subirFoto(file, userId) {
-    // Creamos un nombre único para que no se pisen las fotos
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}-${Date.now()}.${fileExt}`;
 
+    // Usamos el nombre del bucket que tenés en Supabase
     const { data, error } = await supabaseClient.storage
-        .from('fotos_perfil')
+        .from('FOTOS_PERFILES') 
         .upload(fileName, file);
 
     if (error) throw error;
 
-    // Obtenemos la URL pública
+    // Obtenemos la URL pública del mismo bucket
     const { data: { publicUrl } } = supabaseClient.storage
-        .from('fotos_perfil')
+        .from('FOTOS_PERFILES')
         .getPublicUrl(fileName);
 
     return publicUrl;
@@ -97,7 +97,6 @@ if (formPerfil) {
         try {
             let fotoFinal = fotoUrlActual;
             
-            // Si el usuario seleccionó una imagen nueva
             if (fotoInput.files && fotoInput.files[0]) {
                 fotoFinal = await subirFoto(fotoInput.files[0], session.user.id);
             }
