@@ -1,5 +1,7 @@
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
+
+// Inicialización correcta
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const fotoInput = document.getElementById('foto');
@@ -8,10 +10,21 @@ const formPerfil = document.getElementById('form-perfil');
 let fotoActual = ""; 
 let usuarioYaExiste = false;
 
+// Función para verificar sesión al cargar
 async function verificarSesion() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    console.log("Verificando sesión...");
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    
+    if (error) {
+        console.error("Error obteniendo sesión:", error.message);
+        return;
+    }
+
     if (session) {
+        console.log("Sesión activa detectada para:", session.user.email);
         cargarDatosParaEditar(session.user);
+    } else {
+        console.warn("No hay sesión activa. El usuario debe iniciar sesión con Google.");
     }
 }
 
@@ -21,6 +34,8 @@ async function cargarDatosParaEditar(userAuth) {
         .select('*')
         .eq('user_id', userAuth.id)
         .maybeSingle();
+
+    if (error) console.error("Error al cargar datos:", error.message);
 
     if (data) {
         usuarioYaExiste = true;
@@ -50,25 +65,22 @@ if (formPerfil) {
     formPerfil.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) return Swal.fire("Error", "Debes iniciar sesión", "error");
+        // Obtenemos la sesión justo antes de guardar
+        const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
+
+        if (!session) {
+            return Swal.fire({
+                icon: "error",
+                title: "Sesión no iniciada",
+                text: "Debes iniciar sesión con Google antes de publicar.",
+                footer: '<a href="login.html">Ir al login</a>'
+            });
+        }
 
         Swal.fire({ title: 'Guardando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
         try {
             let fotoUrlFinal = fotoActual;
-            const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
-            console.log("Sesión detectada:", session); // Esto nos dirá en la consola si te reconoce o no
-
-            if (!session) {
-                return Swal.fire({
-                    icon: "error",
-                    title: "Sesión no iniciada",
-                    text: "Por favor, inicia sesión con Google antes de publicar.",
-                    footer: '<a href="login.html">Ir al login</a>' // Agregamos un acceso directo
-                });
-            }
-
             const slugFinal = document.getElementById('slug').value.toLowerCase().trim();
 
             const datos = {
@@ -84,7 +96,7 @@ if (formPerfil) {
                 skills: document.getElementById('skills').value, 
                 disponibilidad: document.getElementById('disponibilidad').value,
                 ubicacion: document.getElementById('ubicacion').value,
-                foto: fotoUrlFinal, // Mantiene la actual o la nueva
+                foto: fotoUrlFinal,
                 slug: slugFinal
             };
 
@@ -112,19 +124,22 @@ if (formPerfil) {
             });
 
         } catch (err) {
-            console.error(err);
+            console.error("Error en el guardado:", err);
             Swal.fire({ icon: 'error', title: 'Error al guardar', text: err.message });
         }
     });
 }
 
-fotoInput.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => imgPreview.src = e.target.result;
-        reader.readAsDataURL(file);
-    }
-});
+// Lógica de preview de imagen
+if (fotoInput) {
+    fotoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => imgPreview.src = e.target.result;
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', verificarSesion);
