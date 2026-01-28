@@ -1,16 +1,19 @@
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
 
-// Inicialización correcta
+// Inicialización de Supabase
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const fotoInput = document.getElementById('foto');
 const imgPreview = document.getElementById('img-preview');
 const formPerfil = document.getElementById('form-perfil');
+const authSection = document.getElementById('auth-section');
+const btnLoginGoogle = document.getElementById('btn-login-google');
+
 let fotoActual = ""; 
 let usuarioYaExiste = false;
 
-// Función para verificar sesión al cargar
+// 1. Verificar sesión al cargar la página
 async function verificarSesion() {
     console.log("Verificando sesión...");
     const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -21,21 +24,38 @@ async function verificarSesion() {
     }
 
     if (session) {
-        console.log("Sesión activa detectada para:", session.user.email);
+        console.log("Sesión activa detectada:", session.user.email);
+        // Ocultar sección de login si ya está autenticado
+        if (authSection) authSection.style.display = 'none';
         cargarDatosParaEditar(session.user);
     } else {
-        console.warn("No hay sesión activa. El usuario debe iniciar sesión con Google.");
+        console.warn("No hay sesión. Mostrando botón de login.");
+        if (authSection) authSection.style.display = 'block';
     }
 }
 
+// 2. Lógica del botón de Login con Google
+if (btnLoginGoogle) {
+    btnLoginGoogle.addEventListener('click', async () => {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: 'https://vexio.com.ar/admin.html'
+            }
+        });
+        if (error) {
+            Swal.fire("Error", "Error al conectar con Google: " + error.message, "error");
+        }
+    });
+}
+
+// 3. Cargar datos si el usuario ya tiene perfil
 async function cargarDatosParaEditar(userAuth) {
     const { data, error } = await supabaseClient
         .from('usuarios')
         .select('*')
         .eq('user_id', userAuth.id)
         .maybeSingle();
-
-    if (error) console.error("Error al cargar datos:", error.message);
 
     if (data) {
         usuarioYaExiste = true;
@@ -61,23 +81,23 @@ async function cargarDatosParaEditar(userAuth) {
     }
 }
 
+// 4. Lógica de Guardado (Submit)
 if (formPerfil) {
     formPerfil.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Obtenemos la sesión justo antes de guardar
-        const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
+        const { data: { session } } = await supabaseClient.auth.getSession();
 
         if (!session) {
             return Swal.fire({
-                icon: "error",
-                title: "Sesión no iniciada",
-                text: "Debes iniciar sesión con Google antes de publicar.",
-                footer: '<a href="login.html">Ir al login</a>'
+                icon: "warning",
+                title: "Inicia sesión",
+                text: "Por favor, hacé clic en el botón de Google arriba antes de publicar.",
+                confirmButtonColor: '#00d2ff'
             });
         }
 
-        Swal.fire({ title: 'Guardando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        Swal.fire({ title: 'Guardando perfil...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
         try {
             let fotoUrlFinal = fotoActual;
@@ -102,35 +122,30 @@ if (formPerfil) {
 
             let resultado;
             if (usuarioYaExiste) {
-                resultado = await supabaseClient
-                    .from('usuarios')
-                    .update(datos)
-                    .eq('user_id', session.user.id);
+                resultado = await supabaseClient.from('usuarios').update(datos).eq('user_id', session.user.id);
             } else {
-                resultado = await supabaseClient
-                    .from('usuarios')
-                    .insert([datos]);
+                resultado = await supabaseClient.from('usuarios').insert([datos]);
             }
 
             if (resultado.error) throw resultado.error;
 
             Swal.fire({ 
                 icon: 'success', 
-                title: '¡Perfil Guardado!', 
-                text: 'Te estamos redirigiendo a tu portfolio.',
+                title: '¡Perfil Publicado!', 
+                text: 'Tu portfolio ya está online.',
                 confirmButtonColor: '#00d2ff'
             }).then(() => {
                 window.location.href = `usuario.html?user=${slugFinal}`;
             });
 
         } catch (err) {
-            console.error("Error en el guardado:", err);
+            console.error(err);
             Swal.fire({ icon: 'error', title: 'Error al guardar', text: err.message });
         }
     });
 }
 
-// Lógica de preview de imagen
+// Lógica de preview de foto
 if (fotoInput) {
     fotoInput.addEventListener('change', function() {
         const file = this.files[0];

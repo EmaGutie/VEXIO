@@ -52,23 +52,29 @@
             background: #1a1a1a;
             color: white;
         }
-        .btn-logout {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            text-decoration: none;
-            transition: 0.3s;
+        #auth-section {
+            display: none; /* Se activa vía JS si no hay sesión */
+            text-align: center;
+            margin-top: 20px;
         }
-        .btn-logout:hover {
-            background: rgba(255, 0, 0, 0.2);
-            border-color: rgba(255,0,0,0.5);
-            color: white;
+        .btn-google-custom {
+            background-color: white;
+            color: #757575;
+            border: 1px solid #dadce0;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-google-custom:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -95,6 +101,13 @@
                     <div class="text-center mb-5">
                         <h2 class="title-premium">Crea tu Portfolio</h2>
                         <p class="subtitle-premium">Configurá tu identidad profesional en segundos</p>
+                        
+                        <div id="auth-section">
+                            <button id="btn-login-google" type="button" class="btn-google-custom">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                                Ingresar con Google para publicar
+                            </button>
+                        </div>
                     </div>
 
                     <form id="form-perfil">
@@ -244,32 +257,22 @@
 function mostrarModal(tipo) {
     const modal = document.getElementById('modalLegal');
     const contenido = document.getElementById('contenidoLegal');
-    
-    // Si los elementos existen, inyectamos el texto
     if (modal && contenido) {
         const textos = {
             'privacidad': '<h3 style="color:#00d2ff">Política de Privacidad</h3><p>En VEXIO, protegemos tus datos personales. Al usar nuestra plataforma, aceptas que tu perfil sea público para fines profesionales y de reclutamiento...</p>',
             'terminos': '<h3 style="color:#00d2ff">Términos y Condiciones</h3><p>El uso de VEXIO implica la aceptación de nuestras normas de comunidad. El usuario es responsable de la veracidad de la información cargada...</p>'
         };
-
         contenido.innerHTML = textos[tipo] || 'Información no disponible';
         modal.style.display = 'flex';
     }
 }
-
 function cerrarModal() {
     const modal = document.getElementById('modalLegal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    if (modal) modal.style.display = 'none';
 }
-
-// Cerrar si hacen clic fuera del cuadradito blanco
 window.onclick = function(event) {
     const modal = document.getElementById('modalLegal');
-    if (event.target == modal) {
-        cerrarModal();
-    }
+    if (event.target == modal) cerrarModal();
 }
 </script>
 
