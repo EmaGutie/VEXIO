@@ -1,6 +1,5 @@
 const supabaseUrl = 'https://nuyeycoyoqlahlwudkpk.supabase.co';
 const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
-
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const fotoInput = document.getElementById('foto');
@@ -12,9 +11,8 @@ const btnLoginGoogle = document.getElementById('btn-login-google');
 let fotoUrlActual = ""; 
 let usuarioYaExiste = false;
 
-// 1. Verificar sesión
 async function verificarSesion() {
-    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         if (authSection) authSection.style.display = 'none';
         cargarDatosParaEditar(session.user);
@@ -23,7 +21,6 @@ async function verificarSesion() {
     }
 }
 
-// 2. Login
 if (btnLoginGoogle) {
     btnLoginGoogle.addEventListener('click', async () => {
         await supabaseClient.auth.signInWithOAuth({
@@ -33,14 +30,8 @@ if (btnLoginGoogle) {
     });
 }
 
-// 3. Cargar datos
 async function cargarDatosParaEditar(userAuth) {
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .select('*')
-        .eq('user_id', userAuth.id)
-        .maybeSingle();
-
+    const { data } = await supabaseClient.from('usuarios').select('*').eq('user_id', userAuth.id).maybeSingle();
     if (data) {
         usuarioYaExiste = true;
         fotoUrlActual = data.foto || "";
@@ -57,46 +48,38 @@ async function cargarDatosParaEditar(userAuth) {
         document.getElementById('sobre_mi').value = data.sobre_mi || "";
         document.getElementById('experiencia').value = data.experiencia || "";
         document.getElementById('educacion').value = data.educacion || "";
-        
         if (data.foto) imgPreview.src = data.foto;
     }
 }
 
-// 4. FUNCIÓN PARA SUBIR FOTO (Corregida con el nombre FOTOS_PERFILES)
+// FUNCIÓN CORREGIDA PARA BUCKET: fotos_perfil
 async function subirFoto(file, userId) {
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}-${Date.now()}.${fileExt}`;
 
-    // Usamos el nombre del bucket que tenés en Supabase
     const { data, error } = await supabaseClient.storage
-        .from('FOTOS_PERFILES') 
+        .from('fotos_perfil') 
         .upload(fileName, file);
 
     if (error) throw error;
 
-    // Obtenemos la URL pública del mismo bucket
     const { data: { publicUrl } } = supabaseClient.storage
-        .from('FOTOS_PERFILES')
+        .from('fotos_perfil')
         .getPublicUrl(fileName);
 
     return publicUrl;
 }
 
-// 5. Submit del formulario
 if (formPerfil) {
     formPerfil.addEventListener('submit', async (e) => {
         e.preventDefault();
         const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) return Swal.fire("Atención", "Iniciá sesión primero.", "warning");
 
-        if (!session) {
-            return Swal.fire("Atención", "Iniciá sesión con Google para publicar.", "warning");
-        }
-
-        Swal.fire({ title: 'Publicando perfil...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        Swal.fire({ title: 'Publicando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
         try {
             let fotoFinal = fotoUrlActual;
-            
             if (fotoInput.files && fotoInput.files[0]) {
                 fotoFinal = await subirFoto(fotoInput.files[0], session.user.id);
             }
@@ -119,32 +102,21 @@ if (formPerfil) {
                 slug: slugFinal
             };
 
-            let res;
-            if (usuarioYaExiste) {
-                res = await supabaseClient.from('usuarios').update(datos).eq('user_id', session.user.id);
-            } else {
-                res = await supabaseClient.from('usuarios').insert([datos]);
-            }
+            let res = usuarioYaExiste ? 
+                await supabaseClient.from('usuarios').update(datos).eq('user_id', session.user.id) :
+                await supabaseClient.from('usuarios').insert([datos]);
 
             if (res.error) throw res.error;
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Vexio Actualizado!',
-                text: 'Tu perfil y foto están listos.',
-                confirmButtonColor: '#00d2ff'
-            }).then(() => {
+            Swal.fire("¡Éxito!", "Perfil y foto actualizados", "success").then(() => {
                 window.location.href = `usuario.html?user=${slugFinal}`;
             });
-
         } catch (err) {
-            console.error(err);
-            Swal.fire("Error", "No pudimos guardar: " + err.message, "error");
+            Swal.fire("Error", err.message, "error");
         }
     });
 }
 
-// Preview de imagen
 if (fotoInput) {
     fotoInput.addEventListener('change', function() {
         const file = this.files[0];
@@ -155,5 +127,4 @@ if (fotoInput) {
         }
     });
 }
-
 document.addEventListener('DOMContentLoaded', verificarSesion);
