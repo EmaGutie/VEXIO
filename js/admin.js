@@ -57,26 +57,16 @@ if (formPerfil) {
 
         try {
             let fotoUrlFinal = fotoActual;
-            const file = fotoInput.files[0];
+            const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
+            console.log("Sesión detectada:", session); // Esto nos dirá en la consola si te reconoce o no
 
-            if (file) {
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
-                
-                const { error: upErr } = await supabaseClient.storage
-                    .from('fotos_perfiles')
-                    .upload(fileName, file, { 
-                        upsert: true,
-                        contentType: file.type 
-                    });
-                
-                if (upErr) throw new Error("Error en imagen: " + upErr.message);
-
-                const { data: pUrl } = supabaseClient.storage
-                    .from('fotos_perfiles')
-                    .getPublicUrl(fileName);
-                
-                fotoUrlFinal = pUrl.publicUrl;
+            if (!session) {
+                return Swal.fire({
+                    icon: "error",
+                    title: "Sesión no iniciada",
+                    text: "Por favor, inicia sesión con Google antes de publicar.",
+                    footer: '<a href="login.html">Ir al login</a>' // Agregamos un acceso directo
+                });
             }
 
             const slugFinal = document.getElementById('slug').value.toLowerCase().trim();
