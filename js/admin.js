@@ -54,15 +54,26 @@ async function cargarDatosParaEditar(userAuth) {
 
 // FUNCIÓN CORREGIDA PARA BUCKET: fotos_perfil
 async function subirFoto(file, userId) {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}-${Date.now()}.${fileExt}`;
+    // 1. Limpieza total: sacamos espacios, símbolos y dejamos solo letras/números
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    const timestamp = Date.now();
+    // Creamos un nombre estandarizado: idUsuario-fecha.ext
+    const fileName = `${userId}-${timestamp}.${fileExt}`;
 
+    // 2. Subida con "upsert": si el archivo existiera (raro con timestamp), lo pisa.
     const { data, error } = await supabaseClient.storage
         .from('fotos_perfil') 
-        .upload(fileName, file);
+        .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: true
+        });
 
-    if (error) throw error;
+    if (error) {
+        console.error("Error detallado de subida:", error);
+        throw new Error("No pudimos subir tu foto. Probá con otra imagen.");
+    }
 
+    // 3. Obtenemos la URL pública
     const { data: { publicUrl } } = supabaseClient.storage
         .from('fotos_perfil')
         .getPublicUrl(fileName);
