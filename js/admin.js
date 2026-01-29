@@ -13,8 +13,23 @@ let usuarioYaExiste = false;
 
 async function verificarSesion() {
     const { data: { session } } = await supabaseClient.auth.getSession();
+    
     if (session) {
         if (authSection) authSection.style.display = 'none';
+
+        // --- CAMBIO SEGURO: Autocompletar Email ---
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+            // Solo lo completa si el usuario no ha escrito nada aún
+            if (!emailInput.value) {
+                emailInput.value = session.user.email;
+            }
+            // Bloqueamos el campo para que coincida siempre con el login de Google
+            emailInput.readOnly = true;
+            emailInput.style.backgroundColor = "#e9ecef"; // Un color grisáceo para indicar que es automático
+        }
+        // ------------------------------------------
+
         cargarDatosParaEditar(session.user);
     } else {
         if (authSection) authSection.style.display = 'block';
