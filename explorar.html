@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="img/favicon-nexuz.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Explorar Talentos | VEXIO</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css?v=3">
+    
+    <style>
+        .input-group-glass {
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .input-group-glass:focus-within {
+            border-color: #00d2ff;
+            box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1);
+        }
+        /* Estilo para que el título destaque */
+        .text-gradient {
+            background: linear-gradient(45deg, #0f172a, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg py-3 sticky-top navbar-glass">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <span class="logo-text fs-3" style="color: #0f172a; font-weight: 800;">VEXIO</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 5L5 19" stroke="#00D2FF" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="6.5" cy="6.5" r="2.5" stroke="#00D2FF" stroke-width="2.5"/>
+                    <circle cx="17.5" cy="17.5" r="2.5" stroke="#00D2FF" stroke-width="2.5"/>
+                </svg>
+            </a>
+            <div class="ms-auto">
+                <a href="index.html" class="btn btn-outline-dark btn-sm rounded-pill px-3 me-2">Volver al Inicio</a>
+                <a href="admin.html" class="btn btn-dark btn-sm rounded-pill px-3 text-white">Mi Panel</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5" id="directorio">
+        <div class="container">
+            <div class="search-box-container mb-5">
+                <div class="text-center mb-4">
+                    <h1 id="titulo-explorar" class="fw-bold display-5 text-gradient">Buscador de Talentos</h1>
+                    <p class="text-muted">Filtrá por tu zona.</p>
+                </div>
+                
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="input-group-glass shadow-lg d-flex align-items-center rounded-pill px-3 py-1">
+                            <span class="px-2"><i class="bi bi-search" style="color: #00d2ff;"></i></span>
+                            <input type="text" id="buscador" class="form-control border-0 shadow-none bg-transparent" placeholder="Buscar por ubicación (ej: Mendoza, Córdoba)...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-usuarios" class="row g-4">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-info" id="loading-spinner" role="status">
+                        <span class="visually-hidden">Cargando talentos...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4 mt-5" style="background: #0f172a;">
+        <div class="container text-center">
+            <p class="mb-0 text-white-50 small">© 2026 VEXIO. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>

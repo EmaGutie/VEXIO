@@ -47,13 +47,14 @@
             color: white !important;
             border-radius: 12px !important;
             padding: 12px !important;
+            box-sizing: border-box;
         }
         .select-premium option {
             background: #1a1a1a;
             color: white;
         }
         #auth-section {
-            display: none; /* Se activa vía JS si no hay sesión */
+            display: none;
             text-align: center;
             margin-top: 20px;
         }
@@ -75,6 +76,14 @@
             background-color: #f8f9fa;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             transform: translateY(-1px);
+        }
+        /* Estilo para los tips de ayuda */
+        .admin-help-text {
+            display: block;
+            font-size: 0.75rem;
+            color: #00d2ff;
+            margin-bottom: 8px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -190,11 +199,13 @@
 
                             <div class="col-md-6">
                                 <label class="label-premium">Experiencia</label>
-                                <textarea id="experiencia" class="input-premium" rows="4" placeholder="Detalla tus trabajos anteriores..."></textarea>
+                                <small class="admin-help-text"><i class="bi bi-info-circle"></i> Usa "Enter" para cada nuevo trabajo.</small>
+                                <textarea id="experiencia" class="input-premium" rows="5" placeholder="Ejemplo:&#10;2021-Actualidad: Cajero en Super X&#10;2018-2020: Vendedor en Tienda Y"></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="label-premium">Educación</label>
-                                <textarea id="educacion" class="input-premium" rows="4" placeholder="Títulos, cursos o certificaciones..."></textarea>
+                                <small class="admin-help-text"><i class="bi bi-info-circle"></i> Usa "Enter" para cada título.</small>
+                                <textarea id="educacion" class="input-premium" rows="5" placeholder="Ejemplo:&#10;2022: Licenciado en Marketing&#10;2019: Curso de Excel Avanzado"></textarea>
                             </div>
 
                             <div class="col-md-12">

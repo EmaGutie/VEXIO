@@ -3,21 +3,17 @@ const supabaseKey = 'sb_publishable_HNWXqeyC2Ka_dHncluOJtA_twH5yLeV';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function cargarPerfil() {
-    // 1. Obtener slug de la URL
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('user'); 
     if (!slug) { window.location.href = 'index.html'; return; }
 
-    // 2. Cargar datos desde Supabase
     const { data: perfil, error } = await supabaseClient
         .from('usuarios').select('*').eq('slug', slug).maybeSingle();
 
     if (error || !perfil) { window.location.href = 'index.html'; return; }
 
-    // 3. Guardar mail en ventana global para el botón (Fix infalible)
     window.emailUsuario = perfil.email ? perfil.email.trim() : null;
 
-    // 4. Lógica para mostrar panel de gestión (Dueño)
     try {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session && session.user.email === perfil.email) {
@@ -26,7 +22,6 @@ async function cargarPerfil() {
         }
     } catch (e) { console.log("Modo visitante"); }
 
-    // 5. Inyectar Datos en el HTML
     const setTexto = (id, valor) => {
         const el = document.getElementById(id);
         if (el) el.innerText = valor || '';
@@ -36,11 +31,63 @@ async function cargarPerfil() {
     setTexto('user-profesion', perfil.profesion);
     setTexto('user-ubicacion', perfil.ubicacion);
     setTexto('user-sobre-mi', perfil.sobre_mi);
-    setTexto('user-experiencia', perfil.experiencia);
-    setTexto('user-educacion', perfil.educacion);
     setTexto('user-status', perfil.disponibilidad || 'Activo');
 
-    // 6. Foto de perfil
+    // --- LÓGICA DE RENDERIZADO "CUADROS GRISELDA" REFORZADA ---
+    
+    const renderizarListaOrdenada = (contenedorId, texto) => {
+        const contenedor = document.getElementById(contenedorId);
+        if (!contenedor) return;
+        contenedor.innerHTML = "";
+
+        if (!texto || texto.trim() === "") {
+            contenedor.innerHTML = '<p class="text-muted small">No hay información registrada.</p>';
+            return;
+        }
+
+        // Dividimos por líneas
+        const lineas = texto.split('\n').filter(linea => linea.trim() !== "");
+
+        lineas.forEach(linea => {
+            const item = document.createElement('div');
+            // Estilo de "casilla" blanca con sombra y borde lateral
+            item.className = 'mb-3 p-3 rounded-4 shadow-sm border-0';
+            item.style.background = "#ffffff";
+            item.style.borderLeft = "5px solid #00d2ff";
+            
+            // Lógica de detección: si tiene ":" o "-" asumimos que es Título/Periodo : Descripción
+            if (linea.includes(':') || (linea.includes('-') && linea.length < 100)) {
+                const separador = linea.includes(':') ? ':' : '-';
+                const partes = linea.split(separador);
+                const titulo = partes[0].trim();
+                const desc = partes.slice(1).join(separador).trim();
+
+                item.innerHTML = `
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="badge bg-info-subtle text-info rounded-pill px-2 py-1 mb-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                            <i class="bi bi-calendar3 me-1"></i> ${titulo.toUpperCase()}
+                        </span>
+                    </div>
+                    <div class="fw-bold text-dark" style="font-size: 1rem; line-height: 1.2;">${desc}</div>
+                `;
+            } else {
+                // Si es una descripción larga o una tarea con viñeta
+                item.innerHTML = `
+                    <div class="text-secondary small d-flex gap-2">
+                        <i class="bi bi-chevron-right text-info"></i>
+                        <span>${linea.trim()}</span>
+                    </div>
+                `;
+            }
+            contenedor.appendChild(item);
+        });
+    };
+
+    renderizarListaOrdenada('container-experiencia', perfil.experiencia);
+    renderizarListaOrdenada('container-educacion', perfil.educacion);
+
+    // --- FIN LÓGICA GRISELDA ---
+
     const userFoto = document.getElementById('user-foto');
     if (userFoto) {
         userFoto.src = (perfil.foto && perfil.foto.trim() !== "") 
@@ -48,71 +95,56 @@ async function cargarPerfil() {
             : `https://ui-avatars.com/api/?name=${encodeURIComponent(perfil.nombre)}&background=00D2FF&color=fff&size=200`;
     }
 
-    // 7. Renderizar Skills
     const skillsContainer = document.getElementById('user-skills');
     if (skillsContainer && perfil.skills) {
         skillsContainer.innerHTML = ""; 
         perfil.skills.split(',').forEach(s => {
             if (s.trim() !== "") {
                 const span = document.createElement('span');
-                span.className = 'badge-skill'; 
+                span.className = 'badge rounded-pill bg-light text-dark border me-2 mb-2 p-2 px-3 fw-medium'; 
                 span.innerText = s.trim();
                 skillsContainer.appendChild(span);
             }
         });
     }
 
-    // 8. Configurar WhatsApp
     const linkWA = document.getElementById('link-whatsapp');
     if (linkWA && perfil.telefono) {
         const numLimpio = perfil.telefono.replace(/\D/g, '');
         linkWA.href = `https://wa.me/${numLimpio}?text=Hola%20${encodeURIComponent(perfil.nombre)}`;
     }
 
-    // 9. Configurar Email (Lógica reforzada)
     const linkEmail = document.getElementById('link-email');
     if (linkEmail && window.emailUsuario) {
         const emailDestino = window.emailUsuario;
         const asunto = encodeURIComponent("Contacto desde VEXIO");
-        
-        // Detectamos si es un dispositivo móvil
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // En Celular: Usamos mailto (abre la App nativa)
             linkEmail.href = `mailto:${emailDestino}?subject=${asunto}`;
             linkEmail.target = "_self"; 
         } else {
-            // En PC: Abrimos Gmail en el navegador
             linkEmail.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailDestino}&su=${asunto}`;
             linkEmail.target = "_blank";
         }
-
-        linkEmail.onclick = (e) => {
-            console.log(isMobile ? "Abriendo App de correo..." : "Abriendo Gmail Web...");
-        };
     }
-} // <--- CIERRE CORRECTO
+}
 
 // --- FUNCIONES GLOBALES ---
 
 function compartirPerfil() {
     const urlPerfil = window.location.href;
     Swal.fire({
-        title: '¡Comparte tu perfil!',
-        html: `<div class="input-group mb-3">
-                <input type="text" id="link-input" class="form-control" value="${urlPerfil}" readonly>
-                <button class="btn btn-primary" onclick="copiarLinkAlPortapapeles()">Copiar</button>
-                </div>`,
-        icon: 'info', showConfirmButton: false, showCloseButton: true, borderRadius: '15px'
+        title: '¡Enlace Copiado!',
+        text: 'Ya podés compartir este perfil profesional.',
+        icon: 'success',
+        background: '#1a1a1a',
+        color: '#ffffff',
+        confirmButtonColor: '#00d2ff',
+        timer: 2000,
+        showConfirmButton: false
     });
-}
-
-function copiarLinkAlPortapapeles() {
-    const copyText = document.getElementById("link-input");
-    copyText.select();
-    navigator.clipboard.writeText(copyText.value);
-    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: '¡Copiado!', showConfirmButton: false, timer: 1500 });
+    navigator.clipboard.writeText(urlPerfil);
 }
 
 async function eliminarPerfilDefinitivo() {
@@ -128,36 +160,7 @@ async function eliminarPerfilDefinitivo() {
 }
 
 function descargarPDF() {
-    // 1. Buscamos todas las tarjetas de contenido
-    const tarjetas = document.querySelectorAll('.bento-card');
-
-    tarjetas.forEach(tarjeta => {
-        // Buscamos el párrafo o el área de texto dentro de la tarjeta
-        const contenido = tarjeta.querySelector('p, pre, .badge-skill');
-        
-        // Si no hay contenido o el texto está vacío (solo espacios)
-        if (!contenido || contenido.innerText.trim() === "") {
-            tarjeta.classList.add('hidden-print'); // Marcamos para ocultar
-        } else {
-            tarjeta.classList.remove('hidden-print');
-        }
-    });
     window.print();
-}
-
-
-function abrirCorreo() {
-    const emailElement = document.getElementById('user-nombre'); // Solo para verificar que cargó datos
-    if (!emailElement) return;
-    
-    // Sacamos el mail directamente del objeto perfil si lo tenés global, 
-    // o mejor lo buscamos de un atributo que guardaremos antes.
-    const mail = window.emailUsuario; 
-    if (mail) {
-        window.location.href = `mailto:${mail}?subject=Contacto desde VEXIO`;
-    } else {
-        alert("Todavía cargando datos o mail no encontrado");
-    }
 }
 
 document.addEventListener('DOMContentLoaded', cargarPerfil);

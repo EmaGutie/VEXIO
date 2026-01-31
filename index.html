@@ -7,38 +7,36 @@
     
     <title>VEXIO | Tu Tarjeta Personal Digital y Portfolio Profesional</title>
     <meta name="description" content="Diseñá tu perfil profesional gratis en 2 minutos. La plataforma líder en Argentina para freelancers y técnicos. ¡Dejá de ser un PDF frío y destacá!">
-    <meta name="keywords" content="tarjeta digital, portfolio online, curriculum interactivo, CV argentina, buscar trabajo it, profesionales argentina, vexio">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/estilos.css?v=3">
     
-    <meta property="og:title" content="VEXIO | Tu Identidad Profesional Digital">
-    <meta property="og:description" content="Creá tu perfil de alto impacto gratis. No más PDFs aburridos, mostrá tu talento de verdad.">
-    <meta property="og:image" content="https://vexio.com.ar/img/preview-nexus.jpg"> 
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://vexio.com.ar">
-    
     <style>
-        .categoria-header {
-            border-left: 4px solid #00d2ff;
-            padding-left: 15px;
-            margin-bottom: 25px;
-            margin-top: 40px;
+        /* ESTILOS DE LAS TARJETAS */
+        .card-profesion {
+            display: block;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
         }
-        .filter-chip.active {
-            background-color: #00d2ff !important;
-            color: white !important;
-            border-color: #00d2ff !important;
+        .card-profesion:hover {
+            transform: translateY(-10px);
         }
-        .input-group-glass {
-            border: 1px solid #e2e8f0;
+        .card-profesion img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 20px;
+            border: 2px solid transparent;
             transition: all 0.3s ease;
+            background-color: white;
         }
-        .input-group-glass:focus-within {
+        .card-profesion:hover img {
             border-color: #00d2ff;
-            box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2) !important;
         }
     </style>
 </head>
@@ -47,22 +45,19 @@
     <nav class="navbar navbar-expand-lg py-3 sticky-top navbar-glass">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-                <span class="logo-text fs-3" style="background: none; -webkit-text-fill-color: initial; color: #0f172a; font-weight: 800;">VEXIO</span>
+                <span class="logo-text fs-3" style="color: #0f172a; font-weight: 800;">VEXIO</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <title>Vexio Logo</title>
                     <path d="M19 5L5 19" stroke="#00D2FF" stroke-width="2.5" stroke-linecap="round"/>
                     <circle cx="6.5" cy="6.5" r="2.5" stroke="#00D2FF" stroke-width="2.5"/>
                     <circle cx="17.5" cy="17.5" r="2.5" stroke="#00D2FF" stroke-width="2.5"/>
                 </svg>
             </a>
-            
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto align-items-center gap-3">
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="#directorio">Explorar Talentos</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="explorar.html">Explorar Talentos</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="conocenos.html">Nuestra Misión</a></li>
                     <li class="nav-item"><a href="admin.html" class="btn btn-dark px-4 rounded-pill fw-bold text-white shadow-sm">Mi Panel</a></li>
                 </ul>
@@ -75,79 +70,103 @@
             <span class="badge-premium mb-3">MOSTRÁ TU TALENTO AL MUNDO CON VEXIO</span>
             <h1 class="display-3 fw-800 mb-4">VEXIO: Dejá de ser un PDF frío.<br><span class="text-gradient">Sé el candidato que eligen.</span></h1>
             <p class="lead mb-5 px-md-5 mx-auto max-w-800 opacity-90">
-                Tu talento merece una vidriera profesional. Creá tu perfil visual de alto impacto en 2 minutos y conectá con las mejores empresas de Argentina.
+                Tu talento merece una vidriera profesional. Creá tu perfil visual de alto impacto y conectá con las mejores empresas de Argentina.
             </p>
             <div class="d-flex flex-column flex-md-row justify-content-center gap-3 align-items-center">
                 <a href="admin.html" class="btn btn-primary-premium btn-cta shadow-lg px-5">¡Crear mi Perfil Ahora!</a>
-                <a href="#directorio" class="btn btn-outline-premium btn-cta px-5">Explorar Talentos</a>
-            </div>
-            <p class="mt-4 text-muted small"><i class="bi bi-people-fill me-2"></i>Sumate a la comunidad de profesionales que ya están humanizando su búsqueda.</p>
-        </div>
-    </section>
-
-    <section class="py-5" id="directorio">
-        <div class="container">
-            <div class="search-box-container mb-5">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold h1">Buscador de Talentos</h2>
-                    <p class="text-muted">Encontrá al profesional ideal filtrando por sector o habilidad.</p>
-                </div>
-                
-                <div class="row justify-content-center">
-                    <div class="col-md-8 col-lg-6">
-                        <div class="input-group-glass shadow-lg d-flex align-items-center bg-white rounded-pill px-3 py-1">
-                            <span class="px-2"><i class="bi bi-search" style="color: #00d2ff;"></i></span>
-                            <input type="text" id="buscador" class="form-control border-0 shadow-none bg-transparent" placeholder="Ej: Vendedor, Cajero, Electricista...">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-wrapper mt-4">
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <button class="filter-chip active" data-category="all">Todos</button>
-                        <button class="filter-chip" data-category="Administración">Administración</button>
-                        <button class="filter-chip" data-category="Ventas">Ventas</button>
-                        <button class="filter-chip" data-category="Atención al cliente">Atención al cliente</button>
-                        <button class="filter-chip" data-category="IT">IT & Software</button>
-                        <button class="filter-chip" data-category="Salud">Salud</button>
-                        <button class="filter-chip" data-category="Técnicos">Oficios y Técnicos</button>
-                        <button class="filter-chip" data-category="Recursos Humanos">Recursos Humanos</button>
-                        <button class="filter-chip" data-category="Gastronomía">Gastronomía y Turismo</button>
-                        <button class="filter-chip" data-category="Logística">Logística</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="contenedor-usuarios" class="row g-4">
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-border text-info" id="loading-spinner" role="status">
-                        <span class="visually-hidden">Cargando talentos...</span>
-                    </div>
-                </div>
+                <a href="explorar.html" class="btn btn-outline-premium btn-cta px-5">Explorar todos</a>
             </div>
         </div>
     </section>
 
-<footer class="py-4 mt-5" style="background: #0f172a; border-top: 1px solid rgba(255,255,255,0.05);">
-    <div class="container d-flex justify-content-between align-items-center">
-        <p class="mb-0 text-white-50 small">© 2026 VEXIO. Todos los derechos reservados.</p>
-        <div class="footer-links">
-            <a href="javascript:void(0)" onclick="mostrarModal('privacidad')" class="text-white-50 text-decoration-none me-3 small">Privacidad</a>
-            <a href="javascript:void(0)" onclick="mostrarModal('terminos')" class="text-white-50 text-decoration-none small">Términos</a>
+    <section class="py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Elegí tu sector</h2>
+            <div class="row g-4 justify-content-center">
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Salud" class="card-profesion">
+                        <img src="img/salud.webp" alt="Salud" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=IT" class="card-profesion">
+                        <img src="img/it.jpg" alt="IT" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Recursos Humanos" class="card-profesion">
+                        <img src="img/rrhh.jpg" alt="RRHH" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Administración" class="card-profesion">
+                        <img src="img/administracion.webp" alt="Administración" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Ventas" class="card-profesion">
+                        <img src="img/ventas.webp" alt="Ventas" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Atención al cliente" class="card-profesion">
+                        <img src="img/atencion al cliente.webp" alt="Atención al cliente" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Técnicos" class="card-profesion">
+                        <img src="img/tecnicos.webp" alt="Técnicos" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Gastronomía" class="card-profesion">
+                        <img src="img/gastronomia.webp" alt="Gastronomía" class="shadow-sm">
+                    </a>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="explorar.html?cat=Logística" class="card-profesion">
+                        <img src="img/logistica.webp" alt="Logística" class="shadow-sm">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4 mt-5" style="background: #0f172a;">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <p class="mb-0 text-white-50 small">© 2026 VEXIO. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <button onclick="mostrarModal('privacidad')" class="btn btn-link text-white-50 text-decoration-none small p-0 me-3">Política de Privacidad</button>
+                <button onclick="mostrarModal('terminos')" class="btn btn-link text-white-50 text-decoration-none small p-0">Términos y Condiciones</button>
+            </div>
         </div>
     </div>
 </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/index.js"></script>
-
-<div id="modalLegal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid #00d2ff; max-width: 500px; width: 90%; position: relative; color: white;">
-        <span onclick="cerrarModal()" style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #00d2ff;">&times;</span>
-        <div id="contenidoLegal"></div>
-        <button onclick="cerrarModal()" style="width: 100%; margin-top: 20px; padding: 10px; border-radius: 50px; border: 1px solid #00d2ff; background: transparent; color: #00d2ff; font-weight: bold;">Entendido</button>
+<div id="modalLegal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div class="bg-white p-4 rounded-4 position-relative" style="max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <button onclick="cerrarModal()" class="btn-close position-absolute" style="top: 15px; right: 15px;"></button>
+        <div id="contenidoLegal" class="text-dark mt-2">
+            </div>
+        <div class="text-center mt-4">
+            <button onclick="cerrarModal()" class="btn btn-info text-white rounded-pill px-5 fw-bold">Entendido</button>
+        </div>
     </div>
 </div>
-</body>
+
+<div id="modalLegal" class="modal-legal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div class="bg-white p-4 rounded-4 position-relative" style="max-width: 600px; width: 100%;">
+        <button onclick="cerrarModal()" class="btn-close position-absolute" style="top: 15px; right: 15px;"></button>
+        <div id="contenidoLegal" class="mt-2">
+            </div>
+        <div class="text-end mt-4">
+            <button onclick="cerrarModal()" class="btn btn-dark rounded-pill px-4">Entendido</button>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/index.js"></script>
+    </body>
 </html>
