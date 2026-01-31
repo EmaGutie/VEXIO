@@ -18,10 +18,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="no-print">
-        <a href="index.html" class="btn-volver-glass">
-            <i class="bi bi-house-door-fill"></i> Inicio
-        </a>
+    <div class="no-print pt-3 pb-2">
+        <div class="container d-flex align-items-center gap-3 px-3">
+            <button onclick="window.history.back()" class="btn btn-light shadow-sm rounded-pill d-flex align-items-center gap-2 px-3" style="border: 1px solid #ddd; height: 45px; font-weight: 600;">
+                <i class="bi bi-arrow-left-short fs-4"></i> Volver
+            </button>
+            
+            <a href="index.html" class="btn btn-light shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="border: 1px solid #ddd; width: 45px; height: 45px;">
+                <i class="bi bi-house-door fs-5"></i>
+            </a>
+        </div>
     </div>
 
     <div class="container bento-container" id="area-cv" style="position: relative;">
